@@ -1,0 +1,46 @@
+buildscript {
+    ext {
+        catalejoVersion = "0.0.9"
+        inquisitorVersion = "0.0.3"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+repositories {
+    jcenter()
+
+    maven {
+        url "http://maven.epoxide.org"
+    }
+}
+
+dependencies {
+    compile "com.diluv.catalejo:Catalejo:${catalejoVersion}"
+    compile "com.diluv.catalejo:Catalejo-Java:${catalejoVersion}"
+    compile "com.diluv.catalejo:Catalejo-Minecraft:${catalejoVersion}"
+
+    compile "com.diluv.inquisitor:Inquisitor:${inquisitorVersion}"
+    compile "com.diluv.inquisitor:Inquisitor-ClamAV:${inquisitorVersion}"
+
+    compile "org.jooq:jooq:3.9.3"
+    compile "org.jooq:jooq-meta:3.9.3"
+    compile "org.jooq:jooq-codegen:3.9.3"
+    compile "mysql:mysql-connector-java:5.1.41"
+}
+
+idea {
+    module.iml.withXml {
+        def node = it.asNode()
+        def content = node.component.find { it.'@name' == 'NewModuleRootManager' }.content[0]
+        content.sourceFolder.each { sourceFolder ->
+            if(sourceFolder.@url?.endsWith('/resources')) {
+                sourceFolder.attributes().with {
+                    boolean isTestSource = (remove('isTestSource') == 'true')
+                    put('type', isTestSource ? 'java-test-resource' : 'java-resource')
+                }
+            }
+        }
+    }
+}
