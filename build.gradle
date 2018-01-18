@@ -1,18 +1,32 @@
 buildscript {
     ext {
-        catalejoVersion = "0.0.9"
-        inquisitorVersion = "0.0.3"
+        catalejoVersion = "0.0.1.5-SNAPSHOT"
+        inquisitorVersion = "0.0.1.1-SNAPSHOT"
+    }
+
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
     }
 }
 
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 repositories {
     jcenter()
 
     maven {
-        url "http://maven.epoxide.org"
+        url "https://maven.diluv.io"
+    }
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "com.diluv.hilo.Hilo"
     }
 }
 
@@ -35,7 +49,7 @@ idea {
         def node = it.asNode()
         def content = node.component.find { it.'@name' == 'NewModuleRootManager' }.content[0]
         content.sourceFolder.each { sourceFolder ->
-            if(sourceFolder.@url?.endsWith('/resources')) {
+            if (sourceFolder.@url?.endsWith('/resources')) {
                 sourceFolder.attributes().with {
                     boolean isTestSource = (remove('isTestSource') == 'true')
                     put('type', isTestSource ? 'java-test-resource' : 'java-resource')

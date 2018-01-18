@@ -28,7 +28,7 @@
             <!-- All elements that are generated from your schema
                  (A Java regular expression. Use the pipe to separate several expressions)
                  Watch out for case-sensitivity. Depending on your database, this might be important! -->
-            <includes>(PROJECT_FILE|PROJECT_FILE_PROCESSING)</includes>
+            <includes>(PROJECT|PROJECT_FILE|PROJECT_FILE_PROCESSING)</includes>
 
             <!-- All elements that are excluded from your schema
                  (A Java regular expression. Use the pipe to separate several expressions).

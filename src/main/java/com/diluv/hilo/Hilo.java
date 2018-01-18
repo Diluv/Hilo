@@ -4,17 +4,14 @@ import com.diluv.hilo.models.tables.records.ProjectFileRecord;
 import com.diluv.hilo.process.ProcessCatalejo;
 import com.diluv.hilo.process.ProcessInquisitor;
 import com.diluv.hilo.process.ProcessQueue;
-import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.SQLDialect;
+import org.jooq.TransactionalCallable;
 import org.jooq.impl.DSL;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -41,24 +38,24 @@ public class Hilo {
         //TODO Fix input strings
         String url = String.format("jdbc:mysql://%s:%s/%s", host, port, database);
 
-        List<Long> currentProcessing = Collections.synchronizedList(new ArrayList<Long>());
-
         try {
             final Connection conn = DriverManager.getConnection(url, user, password);
-            DSLContext transaction = DSL.using(conn, SQLDialect.MYSQL);
-            ProcessQueue processQueue = new ProcessQueue(transaction);
+            ProcessQueue processQueue = new ProcessQueue(DSL.using(conn, SQLDialect.MYSQL));
             processQueue.add(new ProcessCatalejo());
             processQueue.add(new ProcessInquisitor());
 
             this.running = true;
             while (running) {
                 try {
-                    ProjectFileRecord dbProject = transaction.transactionResult((x) -> {
-
-                        Long[] processingList = currentProcessing.toArray(new Long[currentProcessing.size()]);
-                        Record1<Long> id = transaction.select(PROJECT_FILE.ID)
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    TransactionalCallable<ProjectFileRecord> transactional = configuration -> {
+                        Record1<Long> id = DSL.using(configuration).select(PROJECT_FILE.ID)
                                 .from(PROJECT_FILE)
-                                .where(PROJECT_FILE.ID.notIn(processingList).and(PROJECT_FILE.PROCESSED.eq(false).and(PROJECT_FILE.REVIEW_NEEDED.eq(false))))
+                                .where(PROJECT_FILE.PUBLIC.eq(false).and(PROJECT_FILE.PROCESSING.eq(false).and(PROJECT_FILE.REVIEW_NEEDED.eq(false))))
                                 .orderBy(PROJECT_FILE.CREATED_AT.desc())
                                 .fetchOne();
 
@@ -67,23 +64,19 @@ public class Hilo {
 
                         long projectFileId = id.get(PROJECT_FILE.ID);
 
-                        if (currentProcessing.contains(projectFileId))
-                            return null;
+                        DSL.using(configuration).update(PROJECT_FILE)
+                                .set(PROJECT_FILE.PROCESSING, true)
+                                .where(PROJECT_FILE.ID.eq((projectFileId)))
+                                .execute();
 
-                        currentProcessing.add(projectFileId);
-
-                        return transaction.selectFrom(PROJECT_FILE)
+                        return DSL.using(configuration).selectFrom(PROJECT_FILE)
                                 .where(PROJECT_FILE.ID.eq(projectFileId))
                                 .fetchOne();
+                    };
 
-                    });
-
-
+                    ProjectFileRecord dbProject = DSL.using(conn, SQLDialect.MYSQL).transactionResult(transactional);
                     if (dbProject != null) {
-                        fileExecutor.execute(() -> {
-                            processQueue.process(conn, dbProject);
-                            currentProcessing.remove(dbProject.getId());
-                        });
+                        fileExecutor.execute(() -> processQueue.process(conn, dbProject));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
