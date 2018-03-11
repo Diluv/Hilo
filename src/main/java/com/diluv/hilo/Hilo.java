@@ -1,13 +1,6 @@
 package com.diluv.hilo;
 
-import com.diluv.hilo.models.tables.records.ProjectFileRecord;
-import com.diluv.hilo.process.ProcessCatalejo;
-import com.diluv.hilo.process.ProcessInquisitor;
-import com.diluv.hilo.process.ProcessQueue;
-import org.jooq.Record1;
-import org.jooq.SQLDialect;
-import org.jooq.TransactionalCallable;
-import org.jooq.impl.DSL;
+import static com.diluv.hilo.models.Tables.PROJECT_FILE;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,7 +8,15 @@ import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.diluv.hilo.models.Tables.PROJECT_FILE;
+import org.jooq.Record1;
+import org.jooq.SQLDialect;
+import org.jooq.TransactionalCallable;
+import org.jooq.impl.DSL;
+
+import com.diluv.hilo.models.tables.records.ProjectFileRecord;
+import com.diluv.hilo.process.ProcessCatalejo;
+import com.diluv.hilo.process.ProcessInquisitor;
+import com.diluv.hilo.process.ProcessQueue;
 
 public class Hilo {
 
@@ -28,86 +29,85 @@ public class Hilo {
     /**
      * Connects to the database and starts processing the database
      */
-    public void start() {
-        String host = System.getenv("dbHost");
-        String port = System.getenv("dbPort");
-        String database = System.getenv("database");
-        String user = System.getenv("dbUsername");
-        String password = System.getenv("dbPassword");
+    public void start () {
 
-        //TODO Fix input strings
-        String url = String.format("jdbc:mysql://%s:%s/%s", host, port, database);
+        final String host = System.getenv("dbHost");
+        final String port = System.getenv("dbPort");
+        final String database = System.getenv("database");
+        final String user = System.getenv("dbUsername");
+        final String password = System.getenv("dbPassword");
+
+        // TODO Fix input strings
+        final String url = String.format("jdbc:mysql://%s:%s/%s", host, port, database);
 
         try {
             final Connection conn = DriverManager.getConnection(url, user, password);
-            ProcessQueue processQueue = new ProcessQueue(DSL.using(conn, SQLDialect.MYSQL));
+            final ProcessQueue processQueue = new ProcessQueue(DSL.using(conn, SQLDialect.MYSQL));
             processQueue.add(new ProcessCatalejo());
             processQueue.add(new ProcessInquisitor());
 
             this.running = true;
-            while (running) {
+            while (this.running) {
                 try {
                     Thread.sleep(1);
-                } catch (InterruptedException e) {
+                }
+                catch (final InterruptedException e) {
                     e.printStackTrace();
                 }
                 try {
-                    TransactionalCallable<ProjectFileRecord> transactional = configuration -> {
-                        Record1<Long> id = DSL.using(configuration).select(PROJECT_FILE.ID)
-                                .from(PROJECT_FILE)
-                                .where(PROJECT_FILE.PUBLIC.eq(false).and(PROJECT_FILE.PROCESSING.eq(false).and(PROJECT_FILE.REVIEW_NEEDED.eq(false))))
-                                .orderBy(PROJECT_FILE.CREATED_AT.desc())
-                                .fetchOne();
+                    final TransactionalCallable<ProjectFileRecord> transactional = configuration -> {
+                        final Record1<Long> id = DSL.using(configuration).select(PROJECT_FILE.ID).from(PROJECT_FILE).where(PROJECT_FILE.PUBLIC.eq(false).and(PROJECT_FILE.PROCESSING.eq(false).and(PROJECT_FILE.REVIEW_NEEDED.eq(false)))).orderBy(PROJECT_FILE.CREATED_AT.desc()).fetchOne();
 
-                        if (id == null)
+                        if (id == null) {
                             return null;
+                        }
 
-                        long projectFileId = id.get(PROJECT_FILE.ID);
+                        final long projectFileId = id.get(PROJECT_FILE.ID);
 
-                        DSL.using(configuration).update(PROJECT_FILE)
-                                .set(PROJECT_FILE.PROCESSING, true)
-                                .where(PROJECT_FILE.ID.eq((projectFileId)))
-                                .execute();
+                        DSL.using(configuration).update(PROJECT_FILE).set(PROJECT_FILE.PROCESSING, true).where(PROJECT_FILE.ID.eq(projectFileId)).execute();
 
-                        return DSL.using(configuration).selectFrom(PROJECT_FILE)
-                                .where(PROJECT_FILE.ID.eq(projectFileId))
-                                .fetchOne();
+                        return DSL.using(configuration).selectFrom(PROJECT_FILE).where(PROJECT_FILE.ID.eq(projectFileId)).fetchOne();
                     };
 
-                    ProjectFileRecord dbProject = DSL.using(conn, SQLDialect.MYSQL).transactionResult(transactional);
+                    final ProjectFileRecord dbProject = DSL.using(conn, SQLDialect.MYSQL).transactionResult(transactional);
                     if (dbProject != null) {
-                        fileExecutor.execute(() -> processQueue.process(conn, dbProject));
+                        fileExecutor.execute( () -> processQueue.process(conn, dbProject));
                     }
-                } catch (Exception e) {
+                }
+                catch (final Exception e) {
                     e.printStackTrace();
-                    //TODO Log properly to database/discord
+                    // TODO Log properly to database/discord
                     this.running = false;
                 }
             }
-        } catch (SQLException e) {
+        }
+        catch (final SQLException e) {
             e.printStackTrace();
         }
 
     }
 
     /**
-     * Creates an 8 thread executor to run the file processing in parallel as a daemon
+     * Creates an 8 thread executor to run the file processing in parallel as a
+     * daemon
      *
      * @param threadName The name of the thread pool
-     * @return ExecutorService of 8 thread pool with the threads running as a daemon
+     * @return ExecutorService of 8 thread pool with the threads running as a
+     *         daemon
      */
-    public static ExecutorService createExecutor(String threadName) {
-        return Executors.newFixedThreadPool(8,
-                r -> {
-                    Thread t = Executors.defaultThreadFactory().newThread(r);
-                    t.setName(threadName);
-                    t.setDaemon(true);
-                    return t;
-                });
+    public static ExecutorService createExecutor (String threadName) {
+
+        return Executors.newFixedThreadPool(8, r -> {
+            final Thread t = Executors.defaultThreadFactory().newThread(r);
+            t.setName(threadName);
+            t.setDaemon(true);
+            return t;
+        });
 
     }
 
-    public static void main(String[] args) {
+    public static void main (String[] args) {
+
         INSTANCE = new Hilo();
         INSTANCE.start();
     }

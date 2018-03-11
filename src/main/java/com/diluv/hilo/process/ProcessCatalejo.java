@@ -1,17 +1,18 @@
 package com.diluv.hilo.process;
 
-import com.diluv.catalejo.Catalejo;
-import com.diluv.hilo.models.tables.records.ProjectFileRecord;
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
+import static com.diluv.hilo.models.Tables.PROJECT_FILE;
 
 import java.io.File;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.diluv.hilo.models.Tables.PROJECT_FILE;
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DSL;
+
+import com.diluv.catalejo.Catalejo;
+import com.diluv.hilo.models.tables.records.ProjectFileRecord;
 
 /**
  * Runs the process for Catalejo, it gets the SHA-256 of the file
@@ -20,38 +21,39 @@ public class ProcessCatalejo implements IProcess {
 
     public Catalejo catalejo;
 
-    public ProcessCatalejo() {
+    public ProcessCatalejo () {
+
         this.catalejo = new Catalejo();
         this.catalejo.add(Catalejo.SHA_512_READER);
     }
 
     @Override
-    public String getProcessName() {
+    public String getProcessName () {
+
         return "Catalejo";
     }
 
     @Override
-    public boolean processFile(File preReleaseFile, ProjectFileRecord projectFile, Connection conn, StringBuilder logger) {
-        Map<String, Object> meta = new HashMap<>();
+    public boolean processFile (File preReleaseFile, ProjectFileRecord projectFile, Connection conn, StringBuilder logger) {
+
+        final Map<String, Object> meta = new HashMap<>();
         try {
             this.catalejo.readFileMeta(meta, preReleaseFile);
-        } catch (Exception e) {
+        }
+        catch (final Exception e) {
             logger.append("SHA 512 exception\n");
             logger.append(e.toString());
             return false;
         }
 
-        Object sha512 = meta.get("SHA-512");
+        final Object sha512 = meta.get("SHA-512");
         if (sha512 == null) {
             logger.append("SHA 512 is null, Internal Error\n");
             return false;
         }
-        DSLContext transaction = DSL.using(conn, SQLDialect.MYSQL);
+        final DSLContext transaction = DSL.using(conn, SQLDialect.MYSQL);
 
-        transaction.update(PROJECT_FILE)
-                .set(PROJECT_FILE.SHA512, (String) sha512)
-                .where(PROJECT_FILE.ID.eq(projectFile.getId()))
-                .execute();
+        transaction.update(PROJECT_FILE).set(PROJECT_FILE.SHA512, (String) sha512).where(PROJECT_FILE.ID.eq(projectFile.getId())).execute();
         return true;
     }
 }

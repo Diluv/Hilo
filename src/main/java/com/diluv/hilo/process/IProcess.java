@@ -1,13 +1,13 @@
 package com.diluv.hilo.process;
 
-import com.diluv.hilo.models.tables.records.ProjectFileRecord;
-
 import java.io.File;
 import java.sql.Connection;
 
+import com.diluv.hilo.models.tables.records.ProjectFileRecord;
+
 public interface IProcess {
 
-    String getProcessName();
+    String getProcessName ();
 
-    boolean processFile(File preReleaseFile, ProjectFileRecord projectFile, Connection conn, StringBuilder logger);
+    boolean processFile (File preReleaseFile, ProjectFileRecord projectFile, Connection conn, StringBuilder logger);
 }
