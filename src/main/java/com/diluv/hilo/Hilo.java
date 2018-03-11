@@ -20,7 +20,7 @@ import com.diluv.hilo.process.ProcessQueue;
 
 public class Hilo {
 
-    private static Hilo INSTANCE;
+    private static final Hilo INSTANCE = new Hilo();
 
     private static final ExecutorService fileExecutor = createExecutor("Hilo Processing");
 
@@ -108,7 +108,6 @@ public class Hilo {
 
     public static void main (String[] args) {
 
-        INSTANCE = new Hilo();
         INSTANCE.start();
     }
 }
