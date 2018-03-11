@@ -28,8 +28,6 @@ public class Hilo {
 
     private static final ExecutorService fileExecutor = createExecutor("Hilo Processing");
 
-    private boolean running;
-
     /**
      * Connects to the database and starts processing the database
      */
@@ -50,8 +48,8 @@ public class Hilo {
             processQueue.add(new ProcessCatalejo());
             processQueue.add(new ProcessInquisitor());
 
-            this.running = true;
-            while (this.running) {
+            boolean running = true;
+            while (running) {
                 try {
                     Thread.sleep(1);
                 }
@@ -81,7 +79,7 @@ public class Hilo {
                 catch (final Exception e) {
                     
                     LOG.trace("There was an error", e);
-                    this.running = false;
+                    running = false;
                 }
             }
         }
