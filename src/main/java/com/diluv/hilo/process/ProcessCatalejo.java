@@ -19,7 +19,7 @@ import com.diluv.hilo.models.tables.records.ProjectFileRecord;
  */
 public class ProcessCatalejo implements IProcess {
 
-    public Catalejo catalejo;
+    private final Catalejo catalejo;
 
     public ProcessCatalejo () {
 

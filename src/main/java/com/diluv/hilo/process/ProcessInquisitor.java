@@ -15,7 +15,7 @@ import net.diluv.inquisitor.clamav.EngineClamAV;
  */
 public class ProcessInquisitor implements IProcess {
 
-    public Inquisitor inquisitor;
+    private final Inquisitor inquisitor;
 
     public ProcessInquisitor () {
 
