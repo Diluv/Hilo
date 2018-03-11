@@ -34,3 +34,18 @@ settings.json
 /.ideaDataSources
 
 /file-uploads
+
+#Eclipse
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+.metadata
+.classpath
+.project
