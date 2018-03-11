@@ -13,6 +13,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.jooq.DSLContext;
 
+import com.diluv.hilo.Hilo;
 import com.diluv.hilo.models.tables.records.ProjectFileRecord;
 import com.diluv.hilo.models.tables.records.ProjectRecord;
 
@@ -102,7 +103,8 @@ public class ProcessQueue {
             }
         }
         catch (final IOException e) {
-            e.printStackTrace();
+            
+            Hilo.LOG.trace("Could not process", e);
 
             this.transaction.insertInto(PROJECT_FILE_PROCESSING, PROJECT_FILE_PROCESSING.PROJECT_FILE_ID, PROJECT_FILE_PROCESSING.STATUS, PROJECT_FILE_PROCESSING.SUCCESSFUL, PROJECT_FILE_PROCESSING.LOGS).values(projectFileId, "File Copying Exception", false, e.getLocalizedMessage()).execute();
 

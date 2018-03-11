@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.jooq.Record1;
 import org.jooq.SQLDialect;
 import org.jooq.TransactionalCallable;
@@ -21,6 +23,8 @@ import com.diluv.hilo.process.ProcessQueue;
 public class Hilo {
 
     private static final Hilo INSTANCE = new Hilo();
+    
+    public static final Logger LOG = LogManager.getLogger("Hilo");
 
     private static final ExecutorService fileExecutor = createExecutor("Hilo Processing");
 
@@ -52,7 +56,7 @@ public class Hilo {
                     Thread.sleep(1);
                 }
                 catch (final InterruptedException e) {
-                    e.printStackTrace();
+                    LOG.trace("Sleep Interrupted", e);
                 }
                 try {
                     final TransactionalCallable<ProjectFileRecord> transactional = configuration -> {
@@ -75,14 +79,14 @@ public class Hilo {
                     }
                 }
                 catch (final Exception e) {
-                    e.printStackTrace();
-                    // TODO Log properly to database/discord
+                    
+                    LOG.trace("There was an error", e);
                     this.running = false;
                 }
             }
         }
         catch (final SQLException e) {
-            e.printStackTrace();
+            LOG.trace("There was an error", e);
         }
 
     }
