@@ -34,11 +34,11 @@ public class ProcessCatalejo implements IProcess {
     }
 
     @Override
-    public boolean processFile (File preReleaseFile, ProjectFileRecord projectFile, Connection conn, StringBuilder logger) {
+    public boolean processFile (File fileToProcess, ProjectFileRecord projectRecord, Connection conn, StringBuilder logger) {
 
         final Map<String, Object> meta = new HashMap<>();
         try {
-            this.catalejo.readFileMeta(meta, preReleaseFile);
+            this.catalejo.readFileMeta(meta, fileToProcess);
         }
         catch (final Exception e) {
             logger.append("SHA 512 exception" + System.lineSeparator());
@@ -53,7 +53,7 @@ public class ProcessCatalejo implements IProcess {
         }
         final DSLContext transaction = DSL.using(conn, SQLDialect.MYSQL);
 
-        transaction.update(PROJECT_FILE).set(PROJECT_FILE.SHA512, (String) sha512).where(PROJECT_FILE.ID.eq(projectFile.getId())).execute();
+        transaction.update(PROJECT_FILE).set(PROJECT_FILE.SHA512, (String) sha512).where(PROJECT_FILE.ID.eq(projectRecord.getId())).execute();
         return true;
     }
 }

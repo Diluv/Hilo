@@ -30,10 +30,10 @@ public class ProcessInquisitor implements IProcess {
     }
 
     @Override
-    public boolean processFile (File preReleaseFile, ProjectFileRecord projectFile, Connection conn, StringBuilder logger) {
+    public boolean processFile (File fileToProcess, ProjectFileRecord fileRecord, Connection conn, StringBuilder logger) {
 
         try {
-            final List<IReport> reportList = this.inquisitor.scanFile(preReleaseFile);
+            final List<IReport> reportList = this.inquisitor.scanFile(fileToProcess);
 
             for (final IReport report : reportList) {
                 logger.append(String.format("%s (%s)", report.getTitle(), report.getEngineName())).append(System.lineSeparator());
