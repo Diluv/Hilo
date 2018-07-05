@@ -36,8 +36,8 @@ public class ProcessInquisitor implements IProcess {
             final List<IReport> reportList = this.inquisitor.scanFile(preReleaseFile);
 
             for (final IReport report : reportList) {
-                logger.append(String.format("%s (%s)", report.getTitle(), report.getEngineName())).append("\n");
-                logger.append(report.getDescription()).append("\n").append("\n");
+                logger.append(String.format("%s (%s)", report.getTitle(), report.getEngineName())).append(System.lineSeparator());
+                logger.append(report.getDescription()).append(System.lineSeparator()).append(System.lineSeparator());
             }
 
             return reportList.isEmpty();

@@ -41,14 +41,14 @@ public class ProcessCatalejo implements IProcess {
             this.catalejo.readFileMeta(meta, preReleaseFile);
         }
         catch (final Exception e) {
-            logger.append("SHA 512 exception\n");
+            logger.append("SHA 512 exception" + System.lineSeparator());
             logger.append(e.toString());
             return false;
         }
 
         final Object sha512 = meta.get("SHA-512");
         if (sha512 == null) {
-            logger.append("SHA 512 is null, Internal Error\n");
+            logger.append("SHA 512 is null, Internal Error" + System.lineSeparator());
             return false;
         }
         final DSLContext transaction = DSL.using(conn, SQLDialect.MYSQL);
