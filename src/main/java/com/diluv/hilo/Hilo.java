@@ -23,7 +23,7 @@ import com.diluv.hilo.process.ProcessQueue;
 public class Hilo {
 
     private static final Hilo INSTANCE = new Hilo();
-    
+
     public static final Logger LOG = LogManager.getLogger("Hilo");
 
     private static final ExecutorService fileExecutor = createExecutor("Hilo Processing");
@@ -77,7 +77,7 @@ public class Hilo {
                     }
                 }
                 catch (final Exception e) {
-                    
+
                     LOG.trace("There was an error", e);
                     running = false;
                 }

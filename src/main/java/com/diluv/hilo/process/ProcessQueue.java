@@ -18,6 +18,7 @@ import com.diluv.hilo.models.tables.records.ProjectFileRecord;
 import com.diluv.hilo.models.tables.records.ProjectRecord;
 
 public class ProcessQueue {
+
     private final DSLContext transaction;
     private final List<IProcess> processList;
 
@@ -103,7 +104,7 @@ public class ProcessQueue {
             }
         }
         catch (final IOException e) {
-            
+
             Hilo.LOG.trace("Could not process", e);
 
             this.transaction.insertInto(PROJECT_FILE_PROCESSING, PROJECT_FILE_PROCESSING.PROJECT_FILE_ID, PROJECT_FILE_PROCESSING.STATUS, PROJECT_FILE_PROCESSING.SUCCESSFUL, PROJECT_FILE_PROCESSING.LOGS).values(projectFileId, "File Copying Exception", false, e.getLocalizedMessage()).execute();
