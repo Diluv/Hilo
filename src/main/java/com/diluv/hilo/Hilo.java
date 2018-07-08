@@ -8,7 +8,6 @@ import org.jooq.Record1;
 import org.jooq.SQLDialect;
 import org.jooq.TransactionalCallable;
 import org.jooq.impl.DSL;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
