@@ -1,7 +1,7 @@
 package com.diluv.hilo.process;
 
-import com.diluv.hilo.models.tables.records.ProjectFileRecord;
-import com.diluv.hilo.models.tables.records.ProjectRecord;
+import com.diluv.hilo.db.models.tables.records.ProjectFileRecord;
+import com.diluv.hilo.db.models.tables.records.ProjectRecord;
 import org.apache.commons.io.FileUtils;
 import org.jooq.DSLContext;
 
@@ -11,7 +11,7 @@ import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.diluv.hilo.models.Tables.*;
+import static com.diluv.hilo.db.models.Tables.*;
 
 public class ProcessQueue {
     private final DSLContext transaction;
@@ -28,7 +28,7 @@ public class ProcessQueue {
 
     public void process(Connection conn, ProjectFileRecord dbFileRecord) {
         String fileName = dbFileRecord.getFileName();
-        File processingDir = new File(System.getenv("projectProcessingDir"), String.valueOf(dbFileRecord.getId()));
+        File processingDir = new File(System.getenv("PROCESSING_DIR"), String.valueOf(dbFileRecord.getId()));
 
         File processingFile = new File(processingDir, fileName);
         long projectFileId = dbFileRecord.getId();
@@ -76,7 +76,7 @@ public class ProcessQueue {
         StringBuilder logger = new StringBuilder();
 
         try {
-            File releaseDir = new File(System.getenv("projectReleaseDir"), String.valueOf(dbFileRecord.getId()));
+            File releaseDir = new File(System.getenv("RELEASE_DIR"), String.valueOf(dbFileRecord.getId()));
             releaseDir.mkdirs();
             File releaseFile = new File(releaseDir, fileName);
 
@@ -98,6 +98,7 @@ public class ProcessQueue {
                 if (dbProject.getNewProject()) {
                     transaction.update(PROJECT_FILE)
                             .set(PROJECT_FILE.REVIEW_NEEDED, true)
+                            .set(PROJECT_FILE.PROCESSING, false)
                             .where(PROJECT_FILE.ID.eq(dbFileRecord.getId()))
                             .execute();
                 } else {
@@ -116,6 +117,7 @@ public class ProcessQueue {
 
                 transaction.update(PROJECT_FILE)
                         .set(PROJECT_FILE.REVIEW_NEEDED, true)
+                        .set(PROJECT_FILE.PROCESSING, false)
                         .where(PROJECT_FILE.ID.eq(projectFileId))
                         .execute();
             }
@@ -128,6 +130,7 @@ public class ProcessQueue {
 
             transaction.update(PROJECT_FILE)
                     .set(PROJECT_FILE.REVIEW_NEEDED, true)
+                    .set(PROJECT_FILE.PROCESSING, false)
                     .where(PROJECT_FILE.ID.eq(projectFileId))
                     .execute();
         }

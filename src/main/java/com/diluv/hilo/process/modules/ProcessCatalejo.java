@@ -1,7 +1,8 @@
-package com.diluv.hilo.process;
+package com.diluv.hilo.process.modules;
 
 import com.diluv.catalejo.Catalejo;
-import com.diluv.hilo.models.tables.records.ProjectFileRecord;
+import com.diluv.hilo.db.models.tables.records.ProjectFileRecord;
+import com.diluv.hilo.process.IProcess;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
@@ -11,7 +12,7 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.diluv.hilo.models.Tables.PROJECT_FILE;
+import static com.diluv.hilo.db.models.Tables.PROJECT_FILE;
 
 /**
  * Runs the process for Catalejo, it gets the SHA-256 of the file

@@ -1,13 +1,14 @@
 package com.diluv.hilo;
 
-import com.diluv.hilo.models.tables.records.ProjectFileRecord;
-import com.diluv.hilo.process.ProcessCatalejo;
-import com.diluv.hilo.process.ProcessInquisitor;
+import com.diluv.hilo.db.models.tables.records.ProjectFileRecord;
 import com.diluv.hilo.process.ProcessQueue;
+import com.diluv.hilo.process.modules.ProcessCatalejo;
+import com.diluv.hilo.process.modules.ProcessInquisitor;
 import org.jooq.Record1;
 import org.jooq.SQLDialect;
 import org.jooq.TransactionalCallable;
 import org.jooq.impl.DSL;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,7 +16,7 @@ import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.diluv.hilo.models.Tables.PROJECT_FILE;
+import static com.diluv.hilo.db.models.Tables.PROJECT_FILE;
 
 public class Hilo {
 
@@ -46,11 +47,6 @@ public class Hilo {
 
             this.running = true;
             while (running) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 try {
                     TransactionalCallable<ProjectFileRecord> transactional = configuration -> {
                         Record1<Long> id = DSL.using(configuration).select(PROJECT_FILE.ID)

@@ -1,6 +1,8 @@
-package com.diluv.hilo.process;
+package com.diluv.hilo.process.modules;
 
-import com.diluv.hilo.models.tables.records.ProjectFileRecord;
+
+import com.diluv.hilo.db.models.tables.records.ProjectFileRecord;
+import com.diluv.hilo.process.IProcess;
 import com.diluv.inquisitor.Inquisitor;
 import com.diluv.inquisitor.report.IReport;
 import net.diluv.inquisitor.clamav.EngineClamAV;

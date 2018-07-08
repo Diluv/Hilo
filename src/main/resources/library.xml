@@ -38,7 +38,7 @@
 
         <target>
             <!-- The destination package of your generated classes (within the destination directory) -->
-            <packageName>com.diluv.hilo.models</packageName>
+            <packageName>com.diluv.hilo.db.models</packageName>
 
             <!-- The destination directory of your generated classes. Using Maven directory layout here -->
             <directory>src/main/java/</directory>

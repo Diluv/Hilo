@@ -1,6 +1,6 @@
 package com.diluv.hilo.process;
 
-import com.diluv.hilo.models.tables.records.ProjectFileRecord;
+import com.diluv.hilo.db.models.tables.records.ProjectFileRecord;
 
 import java.io.File;
 import java.sql.Connection;
