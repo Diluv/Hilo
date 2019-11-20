@@ -2,7 +2,7 @@ buildscript {
     ext {
         catalejoVersion = "0.0.1.11-SNAPSHOT"
         inquisitorVersion = "0.0.1.5-SNAPSHOT"
-        jooqVersion = "3.10.6"
+        jooqVersion = "3.12.3"
     }
     repositories {
         jcenter()
