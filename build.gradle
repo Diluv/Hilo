@@ -40,7 +40,7 @@ dependencies {
     implementation group: 'com.diluv.inquisitor', name: 'Inquisitor', version: '0.1.11'
     implementation group: 'com.diluv.inquisitor', name: 'Inquisitor-ClamAV', version: '0.1.11'
 
-    compile "mysql:mysql-connector-java:5.1.45"
+    compile "mysql:mysql-connector-java:8.0.18"
 }
 
 static String getBuildNumber() {
