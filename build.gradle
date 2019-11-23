@@ -2,37 +2,17 @@ buildscript {
     ext {
         catalejoVersion = "0.0.1.11-SNAPSHOT"
         inquisitorVersion = "0.0.1.5-SNAPSHOT"
-        jooqVersion = "3.10.6"
     }
     repositories {
         jcenter()
-        maven {
-            name = "gradle"
-            url "https://plugins.gradle.org/m2/"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/groups/public"
-        }
-    }
-    dependencies {
-        classpath "com.bmuschko:gradle-docker-plugin:3.0.11"
     }
 }
 
 plugins {
-    id "idea"
     id "java"
-    id "org.sonarqube" version "2.6.2"
 }
 
-apply plugin: "com.bmuschko.docker-remote-api"
-
-import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
-import groovy.json.JsonSlurper
-
-version = "${project_version}" + getBuildNumber()
+version = "${project_version}" + getBuildNumber() + isSnapshot()
 group = "${project_group}"
 archivesBaseName = "${project_name}"
 
@@ -53,89 +33,21 @@ jar {
 }
 
 dependencies {
-    compile "com.diluv.catalejo:Catalejo:${catalejoVersion}"
-    compile "com.diluv.catalejo:Catalejo-Java:${catalejoVersion}"
-    compile "com.diluv.catalejo:Catalejo-Minecraft:${catalejoVersion}"
+    implementation group: 'com.diluv.catalejo', name: 'Catalejo', version: '0.1.16'
+    implementation group: 'com.diluv.catalejo', name: 'Catalejo-Java', version: '0.1.16'
+    implementation group: 'com.diluv.catalejo', name: 'Catalejo-Minecraft', version: '0.1.16'
 
-    compile "com.diluv.inquisitor:Inquisitor:${inquisitorVersion}"
-    compile "com.diluv.inquisitor:Inquisitor-ClamAV:${inquisitorVersion}"
-
-    compile "org.jooq:jooq:$jooqVersion"
-    runtime "org.jooq:jooq-meta:$jooqVersion"
-    runtime "org.jooq:jooq-codegen:$jooqVersion"
+    implementation group: 'com.diluv.inquisitor', name: 'Inquisitor', version: '0.1.11'
+    implementation group: 'com.diluv.inquisitor', name: 'Inquisitor-ClamAV', version: '0.1.11'
 
     compile "mysql:mysql-connector-java:5.1.45"
 }
 
-class Secrets {
-    def data = null
-
-    def getProperty(String key) {
-        return data ? data[key] : ""
-    }
-}
-
-def secretFile
-if (System.getenv().SECRET_FILE) {
-    secretFile = file System.getenv().SECRET_FILE
-} else {
-    secretFile = file "secret.json"
-}
-
-project.ext.secret = new Secrets()
-if (secretFile.exists()) {
-    secretFile.withReader {
-        project.ext.secret.data = new JsonSlurper().parse it
-    }
-}
-
-sonarqube {
-    properties {
-        property "sonar.host.url", secret.sonarHost
-        property "sonar.organization", secret.sonarOrganization
-        property "sonar.login", secret.sonarToken
-        property "sonar.projectName", project.archivesBaseName
-        property "sonar.projectKey", "$project.group:$project.archivesBaseName"
-    }
-}
-
-docker {
-    registryCredentials {
-        url = 'https://index.docker.io/v1/'
-        username = secret.dockerUsername
-        password = secret.dockerPassword
-        email = secret.dockerEmail
-    }
-}
-
-task buildDockerImage(type: DockerBuildImage) {
-    inputDir = project.file("./")
-    tags = ["diluv/hilo:latest${isSnapshot()}".toString(), "diluv/hilo:${project.version}${isSnapshot()}".toString()]
-}
-
-task pushDockerVersionTag(type: DockerPushImage, dependsOn: 'buildDockerImage') {
-    imageName = "diluv/hilo"
-    tag = "${project.version}${isSnapshot()}".toString()
-}
-
-task pushDockerLatest(type: DockerPushImage, dependsOn: 'pushDockerVersionTag') {
-    imageName = "diluv/hilo"
-    tag = "latest${isSnapshot()}".toString()
-}
-
 static String getBuildNumber() {
-    return System.getenv("BUILD_NUMBER") ?: System.getenv("TRAVIS_BUILD_NUMBER") ?: "0"
+    return System.getenv("BUILD_NUMBER") ?: "0"
 }
 
-def isSnapshot() {
-    gitBranch() == "development" ? "-SNAPSHOT" : ""
-}
-
-def gitBranch() {
-    def branch = ""
-    def proc = "git rev-parse --abbrev-ref HEAD".execute()
-    proc.in.eachLine { line -> branch = line }
-    proc.err.eachLine { line -> println line }
-    proc.waitFor()
-    branch
+//TODO Not implemented
+static String isSnapshot() {
+    return System.getenv("TRAVIS_TAG") ? "" : "-snapshot"
 }
