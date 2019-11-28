@@ -21,7 +21,7 @@ jar {
 dependencies {
     implementation group: 'com.diluv.catalejo', name: 'Catalejo', version: '0.1.22'
     implementation group: 'com.diluv.catalejo', name: 'Catalejo-Java', version: '0.1.22'
-    implementation group: 'com.diluv.catalejo', name: 'Catalejo-Minecraft', version: '0.1.16'
+    implementation group: 'com.diluv.catalejo', name: 'Catalejo-Minecraft', version: '0.1.22'
 
     implementation group: 'com.diluv.inquisitor', name: 'Inquisitor', version: '0.1.14'
     implementation group: 'com.diluv.inquisitor', name: 'Inquisitor-ClamAV', version: '0.1.14'
