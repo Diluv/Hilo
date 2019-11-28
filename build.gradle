@@ -24,7 +24,7 @@ dependencies {
     implementation group: 'com.diluv.catalejo', name: 'Catalejo-Minecraft', version: '0.1.16'
 
     implementation group: 'com.diluv.inquisitor', name: 'Inquisitor', version: '0.1.14'
-    implementation group: 'com.diluv.inquisitor', name: 'Inquisitor-ClamAV', version: '0.1.11'
+    implementation group: 'com.diluv.inquisitor', name: 'Inquisitor-ClamAV', version: '0.1.14'
 
     implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.5.2'
 }
