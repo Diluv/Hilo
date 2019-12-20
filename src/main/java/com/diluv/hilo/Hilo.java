@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.Logger;
+
+import com.diluv.hilo.processor.IProcessStep;
 
 public class Hilo {
     
