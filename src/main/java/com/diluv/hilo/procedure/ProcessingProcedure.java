@@ -48,7 +48,7 @@ public class ProcessingProcedure {
         }
     }
 
-    public void processFile (Path input, long fileId) {
+    public void processFile (Path input, FileData data) {
 
         /**
          * SETUP
@@ -64,7 +64,7 @@ public class ProcessingProcedure {
             // cleanup step but can be used as a shared storage between
             // processing
             // steps while the procedure is still active.
-            workingDir = Files.createTempDirectory("Hilo-" + fileId);
+            workingDir = Files.createTempDirectory("Hilo-" + data.id);
         }
 
         catch (final IOException e) {
@@ -84,9 +84,9 @@ public class ProcessingProcedure {
             // of insertion.
             for (final IProcessStep step : this.processingSteps) {
 
-                if (step.validate(this.log, fileId, input)) {
+                if (step.validate(this.log, data, input)) {
 
-                    step.process(this.log, fileId, workingDir, input);
+                    step.process(this.log, data, workingDir, input);
                 }
             }
         }

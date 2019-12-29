@@ -6,6 +6,8 @@ import java.nio.file.Path;
 
 import org.apache.logging.log4j.Logger;
 
+import com.diluv.hilo.procedure.FileData;
+
 public class ProcessStepCopy implements IProcessStep {
 
     public static final IProcessStep INSTANCE = new ProcessStepCopy();
@@ -19,7 +21,7 @@ public class ProcessStepCopy implements IProcessStep {
     }
 
     @Override
-    public void process (Logger log, long fileId, Path workingDir, Path file) throws Exception {
+    public void process (Logger log, FileData data, Path workingDir, Path file) throws Exception {
 
         try {
 
@@ -28,14 +30,15 @@ public class ProcessStepCopy implements IProcessStep {
 
         catch (final IOException e) {
 
-            log.error("Failed to copy file with id {} to working directory.", fileId);
+            log.error("Failed to copy file with id {} to working directory.", data.id);
             log.catching(e);
         }
     }
 
     @Override
-    public boolean validate (Logger log, long fileId, Path file) throws Exception {
+    public boolean validate (Logger log, FileData data, Path file) throws Exception {
 
-        return Files.exists(file);
+        // File#exists is faster that Files#exists
+        return file.toFile().exists();
     }
 }

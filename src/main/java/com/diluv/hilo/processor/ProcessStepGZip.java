@@ -11,6 +11,8 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 
+import com.diluv.hilo.procedure.FileData;
+
 public class ProcessStepGZip implements IProcessStep {
 
     public static final IProcessStep INSTANCE = new ProcessStepGZip();
@@ -33,7 +35,7 @@ public class ProcessStepGZip implements IProcessStep {
     }
 
     @Override
-    public void process (Logger log, long fileId, Path workingDir, Path file) throws Exception {
+    public void process (Logger log, FileData data, Path workingDir, Path file) throws Exception {
 
         final Path outputPath = workingDir.resolve(file.getFileName() + ".gz");
 
@@ -51,7 +53,7 @@ public class ProcessStepGZip implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Logger log, long fileId, Path file) throws Exception {
+    public boolean validate (Logger log, FileData data, Path file) throws Exception {
 
         return true;
     }

@@ -4,6 +4,8 @@ import java.nio.file.Path;
 
 import org.apache.logging.log4j.Logger;
 
+import com.diluv.hilo.procedure.FileData;
+
 public interface IProcessStep {
 
     /**
@@ -12,8 +14,8 @@ public interface IProcessStep {
      *
      * @param log An instance of the logger. This may be used to output debug
      *        and error information.
-     * @param fileId A unique id for the file being processed. This should be
-     *        included in log outputs.
+     * @param data A shared data object that is used to collect data for the
+     *        database entry that corresponds to the file.
      * @param workingDir A temporary directory used as shared storage for the
      *        duration of the processing procedure.
      * @param file The file being processed.
@@ -21,7 +23,7 @@ public interface IProcessStep {
      *         step will be caught by the procedure. In this happens the
      *         procedure will end and report that the procedure failed.
      */
-    void process (Logger log, long fileId, Path workingDir, Path file) throws Exception;
+    void process (Logger log, FileData data, Path workingDir, Path file) throws Exception;
 
     /**
      * Gets a name for the process step. This is used to identify the processing
@@ -39,8 +41,8 @@ public interface IProcessStep {
      *
      * @param log An instance of the logger. This may be used to output debug
      *        and error information.
-     * @param fileId A unique id for the file being processed. This should be
-     *        included in log outputs.
+     * @param data A shared data object that is used to collect data for the
+     *        database entry that corresponds to the file.
      * @param file The file being processed.
      * @return Returns whether or not the processing step should be performed on
      *         a given file. Returning false will cause the procedure to skip
@@ -49,5 +51,5 @@ public interface IProcessStep {
      *         step will be caught by the procedure. In this happens the
      *         procedure will end and report that the procedure failed.
      */
-    boolean validate (Logger log, long fileId, Path file) throws Exception;
+    boolean validate (Logger log, FileData data, Path file) throws Exception;
 }
