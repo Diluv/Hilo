@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Map;
 import java.util.UUID;
 
-import com.diluv.hilo.Hilo;
+import com.diluv.hilo.procedure.ProcessingProcedure;
 
 public interface IProcessStep {
 
@@ -22,7 +22,7 @@ public interface IProcessStep {
      * @param properties A map of properties read from the file. //TODO replace
      *        with a databse connection.
      */
-    void process (Hilo hilo, UUID processID, File workingDir, File file, Map<String, Object> properties);
+    void process (ProcessingProcedure hilo, UUID processID, File workingDir, File file, Map<String, Object> properties);
 
     /**
      * Gets a name for the process. This is used as part of the logger to
@@ -47,5 +47,5 @@ public interface IProcessStep {
      *         next step. If an exception is thrown processing will stop and the
      *         file will fail it's processing check.
      */
-    boolean validate (Hilo hilo, UUID processID, File file);
+    boolean validate (ProcessingProcedure hilo, UUID processID, File file);
 }

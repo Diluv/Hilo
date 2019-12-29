@@ -1,4 +1,4 @@
-package com.diluv.hilo;
+package com.diluv.hilo.procedure;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,22 +13,26 @@ import org.apache.logging.log4j.Logger;
 
 import com.diluv.hilo.processor.IProcessStep;
 
-public class Hilo {
+/**
+ * Instances of this class represent a defined procedure for the processing and
+ * handling for different types of files.
+ */
+public class ProcessingProcedure {
 
     /**
-     * An ArrayList which holds all the processing steps for a given processing
-     * procedure. The order of insertion is used as the execution order for the
-     * various processing steps.
+     * An ArrayList that holds all defined processing steps for the procedure.
+     * Order of insertion is used as the execution order for the various
+     * processing steps.
      */
     private final ArrayList<IProcessStep> processingSteps;
 
     /**
-     * A logger instance that can be used by the processor and processing steps
-     * to report debug information and errors.
+     * A logger that is used to report debug and error information generated as
+     * the procedure is executed.
      */
     private final Logger log;
 
-    public Hilo (Logger log) {
+    public ProcessingProcedure (Logger log) {
 
         this.processingSteps = new ArrayList<>();
         this.log = log;
@@ -41,8 +45,13 @@ public class Hilo {
 
     public void processFile (File input) {
 
+        // TODO Replace this process ID with a UUID obtained from the database.
         final UUID processId = UUID.randomUUID();
-        
+
+        // Create a new temporary working directory for this file upload. This
+        // directory is used for the various processing steps to output their
+        // results to. Ultimately the contents of this directory will be moved
+        // to the CDN or wherever their final destination is.
         final File workingDir = new File(processId.toString());
 
         try {
@@ -59,6 +68,7 @@ public class Hilo {
 
         final Map<String, Object> properties = new HashMap<>();
 
+        // Process the file using the given processing steps.
         for (final IProcessStep step : this.processingSteps) {
 
             if (step.validate(this, processId, input)) {
@@ -66,16 +76,19 @@ public class Hilo {
                 step.process(this, processId, workingDir, input, properties);
             }
         }
-        
+
+        // Once all processing steps have been completed, attempt to forcefully
+        // delete the directory. This is done to save file space and also
+        // prevent potential conflicts with working directories.
         try {
-            
+
             FileUtils.forceDelete(workingDir);
         }
-        
-        catch (IOException e) {
+
+        catch (final IOException e) {
 
             this.getLogger().error("Failed to delete working directory for {}.", workingDir.getPath());
-            this.getLogger().catching(e);;
+            this.getLogger().catching(e);
         }
     }
 }

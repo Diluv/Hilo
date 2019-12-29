@@ -7,14 +7,14 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 
-import com.diluv.hilo.Hilo;
+import com.diluv.hilo.procedure.ProcessingProcedure;
 
 public class ProcessStepCopy implements IProcessStep {
 
     private static final String NAME = "Copy Original To Working Directory";
 
     @Override
-    public void process (Hilo hilo, UUID processID, File workingDir, File file, Map<String, Object> properties) {
+    public void process (ProcessingProcedure hilo, UUID processID, File workingDir, File file, Map<String, Object> properties) {
 
         try {
 
@@ -35,7 +35,7 @@ public class ProcessStepCopy implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Hilo hilo, UUID processID, File file) {
+    public boolean validate (ProcessingProcedure hilo, UUID processID, File file) {
 
         return file.exists();
     }

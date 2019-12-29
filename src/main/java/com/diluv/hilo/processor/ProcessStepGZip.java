@@ -12,14 +12,14 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.IOUtils;
 
-import com.diluv.hilo.Hilo;
+import com.diluv.hilo.procedure.ProcessingProcedure;
 
 public class ProcessStepGZip implements IProcessStep {
 
     private static final String NAME = "Static GZip Compression";
 
     @Override
-    public void process (Hilo hilo, UUID processID, File workingDir, File file, Map<String, Object> properties) {
+    public void process (ProcessingProcedure hilo, UUID processID, File workingDir, File file, Map<String, Object> properties) {
 
         final File outputFile = new File(workingDir, file.getName() + ".gz");
 
@@ -44,7 +44,7 @@ public class ProcessStepGZip implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Hilo hilo, UUID processID, File file) {
+    public boolean validate (ProcessingProcedure hilo, UUID processID, File file) {
 
         // TODO double check that GZip can be applied to any file.
         return true;
