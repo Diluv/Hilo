@@ -1,8 +1,6 @@
 apply plugin: 'java'
 
 version = "${project_version}" + getBuildNumber() + isSnapshot()
-group = "${project_group}"
-archivesBaseName = "${project_name}"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
