@@ -8,6 +8,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.diluv.hilo.procedure.FileData;
 
+/**
+ * This processing step is used to copy the input file into the working
+ * directory.
+ */
 public class ProcessStepCopy implements IProcessStep {
 
     public static final IProcessStep INSTANCE = new ProcessStepCopy();

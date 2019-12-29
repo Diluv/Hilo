@@ -8,6 +8,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.diluv.hilo.procedure.FileData;
 
+/**
+ * This processing step collects common and non specialized meta data about the
+ * file such as it's name and it's size.
+ */
 public class ProcessStepMeta implements IProcessStep {
 
     public static final IProcessStep INSTANCE = new ProcessStepMeta();

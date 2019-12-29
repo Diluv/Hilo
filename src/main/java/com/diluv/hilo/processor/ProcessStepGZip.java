@@ -13,6 +13,9 @@ import org.apache.logging.log4j.Logger;
 
 import com.diluv.hilo.procedure.FileData;
 
+/**
+ * This processing step will write a file using GZip compression.
+ */
 public class ProcessStepGZip implements IProcessStep {
 
     public static final IProcessStep INSTANCE = new ProcessStepGZip();

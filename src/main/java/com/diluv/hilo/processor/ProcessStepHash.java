@@ -11,6 +11,9 @@ import org.apache.logging.log4j.Logger;
 
 import com.diluv.hilo.procedure.FileData;
 
+/**
+ * This processing step collects common hashes for the file.
+ */
 public class ProcessStepHash implements IProcessStep {
 
     public static final IProcessStep INSTANCE = new ProcessStepHash();
