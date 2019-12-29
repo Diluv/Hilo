@@ -14,11 +14,15 @@ import org.apache.logging.log4j.Logger;
 
 import com.diluv.hilo.procedure.FileData;
 
-public class ProcessJavaSignature implements IProcessStep {
+/**
+ * This process step will check a jar file for a bundled code signature. If a
+ * signature is found it will be verified.
+ */
+public class ProcessStepJavaSignature implements IProcessStep {
 
     private static final String NAME = "Java Signature Check";
 
-    public static final IProcessStep INSTANCE = new ProcessJavaSignature();
+    public static final IProcessStep INSTANCE = new ProcessStepJavaSignature();
 
     @Override
     public void process (Logger log, FileData data, Path workingDir, Path file) throws Exception {
@@ -36,6 +40,8 @@ public class ProcessJavaSignature implements IProcessStep {
 
                 try {
 
+                    // At least one byte must be read from the stream in order
+                    // for code signers to be loaded.
                     jar.getInputStream(entry).read();
 
                     if (entry.getCodeSigners() != null) {
@@ -65,9 +71,25 @@ public class ProcessJavaSignature implements IProcessStep {
 
     enum SignedStatus {
 
+        /**
+         * The jar file could be read but it had no associated signature.
+         */
         UNSIGNED,
+
+        /**
+         * The jar file could be read and also has a valid signature.
+         */
         SIGNED,
+
+        /**
+         * The jar file could be read but did not have a valid signature.
+         */
         INVALID,
+
+        /**
+         * The jar file could not be read at all. It may not be a jar at all, or
+         * possibly corrupted.
+         */
         UNREADABLE;
     }
 
