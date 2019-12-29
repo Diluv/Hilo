@@ -1,32 +1,16 @@
 package com.diluv.hilo.processor;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import java.util.UUID;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.apache.commons.io.FileUtils;
-
-import com.diluv.hilo.procedure.ProcessingProcedure;
+import org.apache.logging.log4j.Logger;
 
 public class ProcessStepCopy implements IProcessStep {
 
+    public static final IProcessStep INSTANCE = new ProcessStepCopy();
+
     private static final String NAME = "Copy Original To Working Directory";
-
-    @Override
-    public void process (ProcessingProcedure hilo, UUID processID, File workingDir, File file, Map<String, Object> properties) {
-
-        try {
-
-            FileUtils.copyFileToDirectory(file, workingDir);
-        }
-
-        catch (final IOException e) {
-
-            hilo.getLogger().error("Failed to copy file with id {} to working directory.", processID);
-            hilo.getLogger().catching(e);
-        }
-    }
 
     @Override
     public String getProcessName () {
@@ -35,8 +19,23 @@ public class ProcessStepCopy implements IProcessStep {
     }
 
     @Override
-    public boolean validate (ProcessingProcedure hilo, UUID processID, File file) {
+    public void process (Logger log, long fileId, Path workingDir, Path file) throws Exception {
 
-        return file.exists();
+        try {
+
+            Files.copy(file, workingDir.resolve(file.getFileName()));
+        }
+
+        catch (final IOException e) {
+
+            log.error("Failed to copy file with id {} to working directory.", fileId);
+            log.catching(e);
+        }
+    }
+
+    @Override
+    public boolean validate (Logger log, long fileId, Path file) throws Exception {
+
+        return Files.exists(file);
     }
 }

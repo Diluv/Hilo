@@ -1,51 +1,53 @@
 package com.diluv.hilo.processor;
 
-import java.io.File;
-import java.util.Map;
-import java.util.UUID;
+import java.nio.file.Path;
 
-import com.diluv.hilo.procedure.ProcessingProcedure;
+import org.apache.logging.log4j.Logger;
 
 public interface IProcessStep {
 
     /**
-     * Performs a processing step on a file as part of a larger processing
-     * pipeline.
+     * Performs the action designated to the processing step. This is performed
+     * as part of a larger processing pipeline called a processing procedure.
      *
-     * @param hilo The instance of Hilo which invoked the processing step.
-     * @param processID An identifier for the current processing operation that
-     *        is unique for each file processed.
-     * @param workingDir The current working directory for the current
-     *        processing operation. This is created before the file is processed
-     *        and will be deleted after all process steps have been completed.
+     * @param log An instance of the logger. This may be used to output debug
+     *        and error information.
+     * @param fileId A unique id for the file being processed. This should be
+     *        included in log outputs.
+     * @param workingDir A temporary directory used as shared storage for the
+     *        duration of the processing procedure.
      * @param file The file being processed.
-     * @param properties A map of properties read from the file. //TODO replace
-     *        with a databse connection.
+     * @throws Exception Any unhandled exception thrown during the processing
+     *         step will be caught by the procedure. In this happens the
+     *         procedure will end and report that the procedure failed.
      */
-    void process (ProcessingProcedure hilo, UUID processID, File workingDir, File file, Map<String, Object> properties);
+    void process (Logger log, long fileId, Path workingDir, Path file) throws Exception;
 
     /**
-     * Gets a name for the process. This is used as part of the logger to
-     * describe the current processing step stage.
+     * Gets a name for the process step. This is used to identify the processing
+     * step and may be used in logging and other information displays. This is
+     * ideally a constant value.
      *
-     * @return The name of the process.
+     * @return A name for the processing step.
      */
     String getProcessName ();
 
     /**
-     * Validates whether or not a process can be ran on a given file. If this
-     * check fails processor will simply continue to the next step. If an
-     * exception is thrown processing will stop and the file will fail it's
-     * processing check.
+     * Validates whether or not the processing step can be performed on a given
+     * file. If this check fails the procedure will simply continue to the next
+     * step.
      *
-     * @param hilo The instance of hilo which invoked the processing step.
-     * @param processID An identifier for the current processing operation that
-     *        is unique for each file processed.
+     * @param log An instance of the logger. This may be used to output debug
+     *        and error information.
+     * @param fileId A unique id for the file being processed. This should be
+     *        included in log outputs.
      * @param file The file being processed.
-     * @return Whether or not the process step can run for the given file.
-     *         Returning false will simply tell the processor to skip to the
-     *         next step. If an exception is thrown processing will stop and the
-     *         file will fail it's processing check.
+     * @return Returns whether or not the processing step should be performed on
+     *         a given file. Returning false will cause the procedure to skip
+     *         the step and continue on to the next one.
+     * @throws Exception Any unhandled exception thrown during the processing
+     *         step will be caught by the procedure. In this happens the
+     *         procedure will end and report that the procedure failed.
      */
-    boolean validate (ProcessingProcedure hilo, UUID processID, File file);
+    boolean validate (Logger log, long fileId, Path file) throws Exception;
 }
