@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
 
 import com.diluv.hilo.processor.IProcessStep;
@@ -41,6 +42,7 @@ public class Hilo {
     public void processFile (File input) {
 
         final UUID processId = UUID.randomUUID();
+        
         final File workingDir = new File(processId.toString());
 
         try {
@@ -63,6 +65,17 @@ public class Hilo {
 
                 step.process(this, processId, workingDir, input, properties);
             }
+        }
+        
+        try {
+            
+            FileUtils.forceDelete(workingDir);
+        }
+        
+        catch (IOException e) {
+
+            this.getLogger().error("Failed to delete working directory for {}.", workingDir.getPath());
+            this.getLogger().catching(e);;
         }
     }
 }
