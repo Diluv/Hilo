@@ -12,12 +12,6 @@ repositories {
     mavenCentral()
 }
 
-jar {
-    manifest {
-        attributes "Main-Class": "com.diluv.hilo.Hilo"
-    }
-}
-
 dependencies {
     implementation group: 'com.diluv.catalejo', name: 'Catalejo', version: '0.1.22'
     implementation group: 'com.diluv.catalejo', name: 'Catalejo-Java', version: '0.1.22'
