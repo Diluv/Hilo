@@ -14,12 +14,18 @@ public class FileData {
      */
     public String name;
 
+    /**
+     * A MD5 hash of the file.
+     */
     public String md5;
 
+    /**
+     * A SHA 256 hash of the file.
+     */
     public String sha256;
 
     /**
-     * A sha512 hash of the file.
+     * A SHA 512 hash of the file.
      */
     public String sha512;
 
