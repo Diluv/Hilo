@@ -1,4 +1,4 @@
-package com.diluv.hilo.procedure;
+package com.diluv.hilo.data;
 
 import java.util.Date;
 

@@ -4,7 +4,8 @@ import java.nio.file.Path;
 
 import org.apache.logging.log4j.Logger;
 
-import com.diluv.hilo.procedure.FileData;
+import com.diluv.hilo.data.FileData;
+import com.diluv.hilo.data.QueueData;
 
 public interface IProcessStep {
 
@@ -16,6 +17,8 @@ public interface IProcessStep {
      *        and error information.
      * @param data A shared data object that is used to collect data for the
      *        database entry that corresponds to the file.
+     * @param queueData Data that is associated with the file when it was
+     *        uploaded to the processing queue.
      * @param workingDir A temporary directory used as shared storage for the
      *        duration of the processing procedure.
      * @param file The file being processed.
@@ -23,7 +26,7 @@ public interface IProcessStep {
      *         step will be caught by the procedure. In this happens the
      *         procedure will end and report that the procedure failed.
      */
-    void process (Logger log, FileData data, Path workingDir, Path file) throws Exception;
+    void process (Logger log, FileData data, QueueData queueData, Path workingDir, Path file) throws Exception;
 
     /**
      * Gets a name for the process step. This is used to identify the processing
@@ -43,6 +46,8 @@ public interface IProcessStep {
      *        and error information.
      * @param data A shared data object that is used to collect data for the
      *        database entry that corresponds to the file.
+     * @param queueData Data that is associated with the file when it was
+     *        uploaded to the processing queue.
      * @param file The file being processed.
      * @return Returns whether or not the processing step should be performed on
      *         a given file. Returning false will cause the procedure to skip
@@ -51,5 +56,5 @@ public interface IProcessStep {
      *         step will be caught by the procedure. In this happens the
      *         procedure will end and report that the procedure failed.
      */
-    boolean validate (Logger log, FileData data, Path file) throws Exception;
+    boolean validate (Logger log, FileData data, QueueData queueData, Path file) throws Exception;
 }

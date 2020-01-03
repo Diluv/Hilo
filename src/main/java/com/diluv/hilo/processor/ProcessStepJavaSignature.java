@@ -12,7 +12,8 @@ import java.util.jar.JarFile;
 
 import org.apache.logging.log4j.Logger;
 
-import com.diluv.hilo.procedure.FileData;
+import com.diluv.hilo.data.FileData;
+import com.diluv.hilo.data.QueueData;
 
 /**
  * This process step will check a jar file for a bundled code signature. If a
@@ -33,7 +34,7 @@ public class ProcessStepJavaSignature implements IProcessStep {
     }
 
     @Override
-    public void process (Logger log, FileData data, Path workingDir, Path file) throws Exception {
+    public void process (Logger log, FileData data, QueueData queueData, Path workingDir, Path file) throws Exception {
 
         SignedStatus signedStatus = SignedStatus.UNREADABLE;
         final Set<CodeSigner> signers = new HashSet<>();
@@ -108,7 +109,7 @@ public class ProcessStepJavaSignature implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Logger log, FileData data, Path file) throws Exception {
+    public boolean validate (Logger log, FileData data, QueueData queueData, Path file) throws Exception {
 
         // TODO validate file is jar
         return true;

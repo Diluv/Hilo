@@ -6,7 +6,8 @@ import java.util.Date;
 
 import org.apache.logging.log4j.Logger;
 
-import com.diluv.hilo.procedure.FileData;
+import com.diluv.hilo.data.FileData;
+import com.diluv.hilo.data.QueueData;
 
 /**
  * This processing step collects common and non specialized meta data about the
@@ -33,7 +34,7 @@ public class ProcessStepMeta implements IProcessStep {
     }
 
     @Override
-    public void process (Logger log, FileData data, Path workingDir, Path file) throws Exception {
+    public void process (Logger log, FileData data, QueueData queueData, Path workingDir, Path file) throws Exception {
 
         final File fileHandle = file.toFile();
         data.name = fileHandle.getName();
@@ -43,7 +44,7 @@ public class ProcessStepMeta implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Logger log, FileData data, Path file) throws Exception {
+    public boolean validate (Logger log, FileData data, QueueData queueData, Path file) throws Exception {
 
         return true;
     }

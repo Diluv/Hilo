@@ -11,7 +11,8 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 
-import com.diluv.hilo.procedure.FileData;
+import com.diluv.hilo.data.FileData;
+import com.diluv.hilo.data.QueueData;
 
 /**
  * This processing step will write a file using GZip compression.
@@ -46,7 +47,7 @@ public class ProcessStepGZip implements IProcessStep {
     }
 
     @Override
-    public void process (Logger log, FileData data, Path workingDir, Path file) throws Exception {
+    public void process (Logger log, FileData data, QueueData queueData, Path workingDir, Path file) throws Exception {
 
         final Path outputPath = workingDir.resolve(file.getFileName() + ".gz");
 
@@ -64,7 +65,7 @@ public class ProcessStepGZip implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Logger log, FileData data, Path file) throws Exception {
+    public boolean validate (Logger log, FileData data, QueueData queueData, Path file) throws Exception {
 
         return true;
     }
