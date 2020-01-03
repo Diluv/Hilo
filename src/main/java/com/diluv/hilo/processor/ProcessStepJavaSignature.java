@@ -24,6 +24,14 @@ public class ProcessStepJavaSignature implements IProcessStep {
 
     public static final IProcessStep INSTANCE = new ProcessStepJavaSignature();
 
+    /**
+     * Can not construct your own. Use {@link #INSTANCE} instead.
+     */
+    private ProcessStepJavaSignature () {
+
+        super();
+    }
+
     @Override
     public void process (Logger log, FileData data, Path workingDir, Path file) throws Exception {
 

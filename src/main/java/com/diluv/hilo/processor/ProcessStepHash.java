@@ -10,7 +10,8 @@ import org.apache.logging.log4j.Logger;
 import com.diluv.hilo.procedure.FileData;
 
 /**
- * This processing step is responsible for calculating the SHA 512 hash of a file.
+ * This processing step is responsible for calculating the SHA 512 hash of a
+ * file.
  */
 public class ProcessStepHash implements IProcessStep {
 
@@ -18,11 +19,19 @@ public class ProcessStepHash implements IProcessStep {
      * The name of the processing step as a constant value.
      */
     private static final String NAME = "Calculating SHA 512 Hash";
-    
+
     /**
      * A global instance of this processing step.
      */
     public static final IProcessStep INSTANCE = new ProcessStepHash();
+
+    /**
+     * Can not construct your own. Use {@link #INSTANCE} instead.
+     */
+    private ProcessStepHash () {
+
+        super();
+    }
 
     @Override
     public void process (Logger log, FileData data, Path workingDir, Path file) throws Exception {

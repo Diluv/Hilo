@@ -22,6 +22,14 @@ public class ProcessStepGZip implements IProcessStep {
 
     private static final String NAME = "Static GZip Compression";
 
+    /**
+     * Can not construct your own. Use {@link #INSTANCE} instead.
+     */
+    private ProcessStepGZip () {
+
+        super();
+    }
+
     @Override
     public String getProcessName () {
 

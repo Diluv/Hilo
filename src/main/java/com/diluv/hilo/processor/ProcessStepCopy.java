@@ -18,6 +18,14 @@ public class ProcessStepCopy implements IProcessStep {
 
     private static final String NAME = "Copy Original To Working Directory";
 
+    /**
+     * Can not construct your own. Use {@link #INSTANCE} instead.
+     */
+    private ProcessStepCopy () {
+
+        super();
+    }
+
     @Override
     public String getProcessName () {
 

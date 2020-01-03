@@ -18,6 +18,14 @@ public class ProcessStepMeta implements IProcessStep {
 
     private static final String NAME = "Harvest Common Meta";
 
+    /**
+     * Can not construct your own. Use {@link #INSTANCE} instead.
+     */
+    private ProcessStepMeta () {
+
+        super();
+    }
+
     @Override
     public String getProcessName () {
 
