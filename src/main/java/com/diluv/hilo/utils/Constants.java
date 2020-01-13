@@ -8,7 +8,7 @@ public class Constants {
 
     private static String getValueOrDefault (String env, String defaultValue) {
 
-        String value = System.getenv(env);
+        final String value = System.getenv(env);
         if (value == null) {
             return defaultValue;
         }

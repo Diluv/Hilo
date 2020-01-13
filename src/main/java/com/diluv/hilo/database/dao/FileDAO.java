@@ -1,9 +1,9 @@
 package com.diluv.hilo.database.dao;
 
-import com.diluv.hilo.database.records.FileQueueRecord;
-
 import java.sql.SQLException;
 import java.util.List;
+
+import com.diluv.hilo.database.records.FileQueueRecord;
 
 public interface FileDAO {
     List<FileQueueRecord> findAllWherePending (int amount);

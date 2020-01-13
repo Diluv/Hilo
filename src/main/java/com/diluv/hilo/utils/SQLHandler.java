@@ -14,12 +14,12 @@ public final class SQLHandler {
     public static String readFile (String filename) {
 
         try {
-            File f = new File(SQLHandler.class.getClassLoader().getResource("db/query/" + filename + ".sql").getFile());
+            final File f = new File(SQLHandler.class.getClassLoader().getResource("db/query/" + filename + ".sql").getFile());
             return FileUtils.readFileToString(f, Charset.defaultCharset());
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             e.printStackTrace();
-            //TODO Throw exception(crash?)
+            // TODO Throw exception(crash?)
         }
         return null;
     }

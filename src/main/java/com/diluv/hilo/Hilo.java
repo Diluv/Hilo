@@ -23,23 +23,25 @@ public class Hilo {
         ds.setPassword(Constants.DB_PASSWORD);
         ds.addDataSourceProperty("rewriteBatchedStatements", "true");
 
-        FileDatabase test = new FileDatabase();
+        final FileDatabase test = new FileDatabase();
         try {
-            List<FileQueueRecord> projectFiles = test.getLatestFileQueueRecord(10);
+            final List<FileQueueRecord> projectFiles = test.getLatestFileQueueRecord(10);
             System.out.println(projectFiles);
         }
-        catch (SQLTransactionRollbackException e) {
-            // TODO Couldn't get a lock (Aka something is causing a lock aka another thread), try again
+        catch (final SQLTransactionRollbackException e) {
+            // TODO Couldn't get a lock (Aka something is causing a lock aka
+            // another thread), try again
         }
-        catch (SQLException e) {
+        catch (final SQLException e) {
             e.printStackTrace();
         }
     }
 
     public static Connection connection () throws SQLException {
 
-        if (connection == null || connection.isClosed())
+        if (connection == null || connection.isClosed()) {
             connection = ds.getConnection();
+        }
         return connection;
     }
 }

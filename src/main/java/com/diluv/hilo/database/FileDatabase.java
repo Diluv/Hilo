@@ -20,7 +20,7 @@ public class FileDatabase implements FileDAO {
     @Override
     public List<FileQueueRecord> findAllWherePending (int amount) {
 
-        List<FileQueueRecord> fileQueueRecord = new ArrayList<>();
+        final List<FileQueueRecord> fileQueueRecord = new ArrayList<>();
         try (PreparedStatement stmt = Hilo.connection().prepareStatement(FIND_ALL_WHERE_PENDING)) {
             stmt.setInt(1, amount);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -29,7 +29,7 @@ public class FileDatabase implements FileDAO {
                 }
             }
         }
-        catch (SQLException e) {
+        catch (final SQLException e) {
             e.printStackTrace();
         }
         return fileQueueRecord;
@@ -44,7 +44,7 @@ public class FileDatabase implements FileDAO {
                 return true;
             }
         }
-        catch (SQLException e) {
+        catch (final SQLException e) {
             Hilo.connection().rollback();
             throw e;
         }
@@ -55,7 +55,7 @@ public class FileDatabase implements FileDAO {
     public List<FileQueueRecord> getLatestFileQueueRecord (int amount) throws SQLException {
 
         List<FileQueueRecord> fileQueueRecord;
-        Connection connection = Hilo.connection();
+        final Connection connection = Hilo.connection();
         final int previousIsolationLevel = connection.getTransactionIsolation();
         try {
             connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
@@ -67,14 +67,15 @@ public class FileDatabase implements FileDAO {
                 return fileQueueRecord;
             }
 
-            Long[] idList = fileQueueRecord.stream().map(FileQueueRecord::getId).toArray(Long[]::new);
-            for (Long id : idList) {
+            final Long[] idList = fileQueueRecord.stream().map(FileQueueRecord::getId).toArray(Long[]::new);
+            for (final Long id : idList) {
                 if (!this.updateFileQueueStatusById(id)) {
-                    //TODO didn't work but didnt throw an exception
+                    // TODO didn't work but didnt throw an exception
                 }
             }
             connection.commit();
-        } finally {
+        }
+        finally {
             connection.setAutoCommit(true);
             connection.setTransactionIsolation(previousIsolationLevel);
         }
