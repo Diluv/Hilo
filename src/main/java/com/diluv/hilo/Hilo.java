@@ -1,31 +1,24 @@
 package com.diluv.hilo;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLTransactionRollbackException;
 import java.util.List;
 
-import com.diluv.hilo.database.FileDatabase;
-import com.diluv.hilo.database.records.FileQueueRecord;
+import com.diluv.confluencia.Confluencia;
+import com.diluv.confluencia.database.FileDatabase;
+import com.diluv.confluencia.database.dao.FileDAO;
+import com.diluv.confluencia.database.records.FileQueueRecord;
 import com.diluv.hilo.utils.Constants;
-import com.zaxxer.hikari.HikariDataSource;
 
 public class Hilo {
 
-    private static HikariDataSource ds;
-    private static Connection connection;
-
     public static void main (String[] args) {
 
-        ds = new HikariDataSource();
-        ds.setJdbcUrl(Constants.DB_HOSTNAME);
-        ds.setUsername(Constants.DB_USERNAME);
-        ds.setPassword(Constants.DB_PASSWORD);
-        ds.addDataSourceProperty("rewriteBatchedStatements", "true");
+        Confluencia.init(Constants.DB_HOSTNAME, Constants.DB_USERNAME, Constants.DB_PASSWORD, false);
 
-        final FileDatabase test = new FileDatabase();
+        final FileDAO fileDAO = new FileDatabase();
         try {
-            final List<FileQueueRecord> projectFiles = test.getLatestFileQueueRecord(10);
+            final List<FileQueueRecord> projectFiles = fileDAO.getLatestFileQueueRecord(10);
             System.out.println(projectFiles);
         }
         catch (final SQLTransactionRollbackException e) {
@@ -35,13 +28,5 @@ public class Hilo {
         catch (final SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public static Connection connection () throws SQLException {
-
-        if (connection == null || connection.isClosed()) {
-            connection = ds.getConnection();
-        }
-        return connection;
     }
 }
