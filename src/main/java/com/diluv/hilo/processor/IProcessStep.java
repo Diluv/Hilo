@@ -22,7 +22,9 @@ public interface IProcessStep {
      * @param workingDir A temporary directory used as shared storage for the
      *        duration of the processing procedure.
      * @param file The file being processed.
-     * @param extension The extension of the file being processed.
+     * @param extension The extension of the file being processed. This is
+     *        considered the text after the last period in the file name. The
+     *        period is not included.
      * @throws Exception Any unhandled exception thrown during the processing
      *         step will be caught by the procedure. In this happens the
      *         procedure will end and report that the procedure failed.
@@ -50,7 +52,9 @@ public interface IProcessStep {
      * @param queueData Data that is associated with the file when it was
      *        uploaded to the processing queue.
      * @param file The file being processed.
-     * @param extension The extension of the file being processed.
+     * @param extension The extension of the file being processed. This is
+     *        considered the text after the last period in the file name. The
+     *        period is not included.
      * @return Returns whether or not the processing step should be performed on
      *         a given file. Returning false will cause the procedure to skip
      *         the step and continue on to the next one.
