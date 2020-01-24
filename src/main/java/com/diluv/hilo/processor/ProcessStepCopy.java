@@ -34,7 +34,7 @@ public class ProcessStepCopy implements IProcessStep {
     }
 
     @Override
-    public void process (Logger log, FileData data, QueueData queueData, Path workingDir, Path file) throws Exception {
+    public void process (Logger log, FileData data, QueueData queueData, Path workingDir, Path file, String extension) throws Exception {
 
         try {
 
@@ -49,7 +49,7 @@ public class ProcessStepCopy implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Logger log, FileData data, QueueData queueData, Path file) throws Exception {
+    public boolean validate (Logger log, FileData data, QueueData queueData, Path file, String extension) throws Exception {
 
         // File#exists is faster that Files#exists
         return file.toFile().exists();

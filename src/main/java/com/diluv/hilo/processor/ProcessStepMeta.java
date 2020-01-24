@@ -34,7 +34,7 @@ public class ProcessStepMeta implements IProcessStep {
     }
 
     @Override
-    public void process (Logger log, FileData data, QueueData queueData, Path workingDir, Path file) throws Exception {
+    public void process (Logger log, FileData data, QueueData queueData, Path workingDir, Path file, String extension) throws Exception {
 
         final File fileHandle = file.toFile();
         data.name = fileHandle.getName();
@@ -44,7 +44,7 @@ public class ProcessStepMeta implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Logger log, FileData data, QueueData queueData, Path file) throws Exception {
+    public boolean validate (Logger log, FileData data, QueueData queueData, Path file, String extension) throws Exception {
 
         return true;
     }

@@ -34,7 +34,7 @@ public class ProcessStepJavaSignature implements IProcessStep {
     }
 
     @Override
-    public void process (Logger log, FileData data, QueueData queueData, Path workingDir, Path file) throws Exception {
+    public void process (Logger log, FileData data, QueueData queueData, Path workingDir, Path file, String extension) throws Exception {
 
         SignedStatus signedStatus = SignedStatus.UNREADABLE;
         final Set<CodeSigner> signers = new HashSet<>();
@@ -109,7 +109,7 @@ public class ProcessStepJavaSignature implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Logger log, FileData data, QueueData queueData, Path file) throws Exception {
+    public boolean validate (Logger log, FileData data, QueueData queueData, Path file, String extension) throws Exception {
 
         // TODO validate file is jar
         return true;

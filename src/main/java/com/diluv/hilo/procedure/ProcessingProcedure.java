@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.util.FileUtils;
 
 import com.diluv.hilo.data.FileData;
 import com.diluv.hilo.data.QueueData;
@@ -63,6 +64,7 @@ public class ProcessingProcedure {
          */
 
         final Path workingDir;
+        final String extension = FileUtils.getFileExtension(input.toFile());
 
         final FileData data = new FileData();
         data.id = queueData.fileId;
@@ -93,9 +95,9 @@ public class ProcessingProcedure {
             // of insertion.
             for (final IProcessStep step : this.processingSteps) {
 
-                if (step.validate(this.log, data, queueData, input)) {
+                if (step.validate(this.log, data, queueData, input, extension)) {
 
-                    step.process(this.log, data, queueData, workingDir, input);
+                    step.process(this.log, data, queueData, workingDir, input, extension);
                 }
             }
         }
