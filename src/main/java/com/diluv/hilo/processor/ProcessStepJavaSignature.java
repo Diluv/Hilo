@@ -111,7 +111,6 @@ public class ProcessStepJavaSignature implements IProcessStep {
     @Override
     public boolean validate (Logger log, FileData data, QueueData queueData, Path file, String extension) throws Exception {
 
-        // TODO validate file is jar
-        return true;
+        return "jar".equalsIgnoreCase(extension);
     }
 }
