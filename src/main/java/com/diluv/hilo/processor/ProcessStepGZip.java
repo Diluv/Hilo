@@ -67,6 +67,6 @@ public class ProcessStepGZip implements IProcessStep {
     @Override
     public boolean validate (Logger log, FileData data, QueueData queueData, Path file, String extension) throws Exception {
 
-        return true;
+        return !"gz".equalsIgnoreCase(extension) && !"br".equalsIgnoreCase(extension);
     }
 }
