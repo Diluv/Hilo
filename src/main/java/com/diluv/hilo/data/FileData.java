@@ -1,7 +1,5 @@
 package com.diluv.hilo.data;
 
-import java.util.Date;
-
 public class FileData {
 
     /**
@@ -15,24 +13,9 @@ public class FileData {
     public String name;
 
     /**
-     * A MD5 hash of the file.
-     */
-    public String md5;
-
-    /**
-     * A SHA 256 hash of the file.
-     */
-    public String sha256;
-
-    /**
      * A SHA 512 hash of the file.
      */
     public String sha512;
-
-    /**
-     * A crc32 hash of the file.
-     */
-    public String crc32;
 
     /**
      * The size of the file in bytes.
@@ -47,12 +30,12 @@ public class FileData {
     /**
      * The date the file was initially uploaded.
      */
-    public Date createdAt;
+    public long createdAt;
 
     /**
      * The date the file was last modified.
      */
-    public Date updatedAt;
+    public long updatedAt;
 
     /**
      * Whether or not the file has been reviewed.
@@ -67,5 +50,5 @@ public class FileData {
     /**
      * The id of the user who uploaded the file.
      */
-    public long uploaderId;
+    public long userId;
 }
