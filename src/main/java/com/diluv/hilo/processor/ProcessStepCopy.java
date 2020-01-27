@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.diluv.confluencia.database.record.FileQueueRecord;
+
 import org.apache.logging.log4j.Logger;
 
 import com.diluv.hilo.data.FileData;
-import com.diluv.hilo.data.QueueData;
 
 /**
  * This processing step is used to copy the input file into the working
@@ -34,7 +35,7 @@ public class ProcessStepCopy implements IProcessStep {
     }
 
     @Override
-    public void process (Logger log, FileData data, QueueData queueData, Path workingDir, Path file, String extension) throws Exception {
+    public void process (Logger log, FileData data, FileQueueRecord queueData, Path workingDir, Path file, String extension) throws Exception {
 
         try {
 
@@ -49,7 +50,7 @@ public class ProcessStepCopy implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Logger log, FileData data, QueueData queueData, Path file, String extension) throws Exception {
+    public boolean validate (Logger log, FileData data, FileQueueRecord queueData, Path file, String extension) throws Exception {
 
         // File#exists is faster that Files#exists
         return file.toFile().exists();

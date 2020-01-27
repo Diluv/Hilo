@@ -4,8 +4,8 @@ import java.nio.file.Path;
 
 import org.apache.logging.log4j.Logger;
 
+import com.diluv.confluencia.database.record.FileQueueRecord;
 import com.diluv.hilo.data.FileData;
-import com.diluv.hilo.data.QueueData;
 
 public interface IProcessStep {
 
@@ -14,22 +14,22 @@ public interface IProcessStep {
      * as part of a larger processing pipeline called a processing procedure.
      *
      * @param log An instance of the logger. This may be used to output debug
-     *        and error information.
+     *     and error information.
      * @param data A shared data object that is used to collect data for the
-     *        database entry that corresponds to the file.
+     *     database entry that corresponds to the file.
      * @param queueData Data that is associated with the file when it was
-     *        uploaded to the processing queue.
+     *     uploaded to the processing queue.
      * @param workingDir A temporary directory used as shared storage for the
-     *        duration of the processing procedure.
+     *     duration of the processing procedure.
      * @param file The file being processed.
      * @param extension The extension of the file being processed. This is
-     *        considered the text after the last period in the file name. The
-     *        period is not included.
+     *     considered the text after the last period in the file name. The
+     *     period is not included.
      * @throws Exception Any unhandled exception thrown during the processing
-     *         step will be caught by the procedure. In this happens the
-     *         procedure will end and report that the procedure failed.
+     *     step will be caught by the procedure. In this happens the
+     *     procedure will end and report that the procedure failed.
      */
-    void process (Logger log, FileData data, QueueData queueData, Path workingDir, Path file, String extension) throws Exception;
+    void process (Logger log, FileData data, FileQueueRecord queueData, Path workingDir, Path file, String extension) throws Exception;
 
     /**
      * Gets a name for the process step. This is used to identify the processing
@@ -46,21 +46,21 @@ public interface IProcessStep {
      * step.
      *
      * @param log An instance of the logger. This may be used to output debug
-     *        and error information.
+     *     and error information.
      * @param data A shared data object that is used to collect data for the
-     *        database entry that corresponds to the file.
+     *     database entry that corresponds to the file.
      * @param queueData Data that is associated with the file when it was
-     *        uploaded to the processing queue.
+     *     uploaded to the processing queue.
      * @param file The file being processed.
      * @param extension The extension of the file being processed. This is
-     *        considered the text after the last period in the file name. The
-     *        period is not included.
+     *     considered the text after the last period in the file name. The
+     *     period is not included.
      * @return Returns whether or not the processing step should be performed on
-     *         a given file. Returning false will cause the procedure to skip
-     *         the step and continue on to the next one.
+     *     a given file. Returning false will cause the procedure to skip
+     *     the step and continue on to the next one.
      * @throws Exception Any unhandled exception thrown during the processing
-     *         step will be caught by the procedure. In this happens the
-     *         procedure will end and report that the procedure failed.
+     *     step will be caught by the procedure. In this happens the
+     *     procedure will end and report that the procedure failed.
      */
-    boolean validate (Logger log, FileData data, QueueData queueData, Path file, String extension) throws Exception;
+    boolean validate (Logger log, FileData data, FileQueueRecord queueData, Path file, String extension) throws Exception;
 }

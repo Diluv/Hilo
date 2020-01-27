@@ -7,7 +7,7 @@ import java.util.List;
 import com.diluv.confluencia.Confluencia;
 import com.diluv.confluencia.database.FileDatabase;
 import com.diluv.confluencia.database.dao.FileDAO;
-import com.diluv.confluencia.database.records.FileQueueRecord;
+import com.diluv.confluencia.database.record.FileQueueRecord;
 import com.diluv.hilo.utils.Constants;
 
 public class Hilo {

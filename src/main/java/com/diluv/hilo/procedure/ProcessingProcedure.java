@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
+import com.diluv.confluencia.database.record.FileQueueRecord;
+import com.diluv.hilo.data.FileData;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.util.FileUtils;
 
-import com.diluv.hilo.data.FileData;
-import com.diluv.hilo.data.QueueData;
 import com.diluv.hilo.processor.IProcessStep;
 
 /**
@@ -57,7 +58,7 @@ public class ProcessingProcedure {
         return this;
     }
 
-    public FileData processFile (Path input, QueueData queueData) {
+    public FileData processFile (Path input, FileQueueRecord queueData) {
 
         /**
          * SETUP
@@ -67,7 +68,12 @@ public class ProcessingProcedure {
         final String extension = FileUtils.getFileExtension(input.toFile());
 
         final FileData data = new FileData();
-        data.id = queueData.fileId;
+        data.id = queueData.getId();
+        data.name = queueData.getName();
+        data.createdAt = queueData.getCreatedAt();
+        data.changelog = queueData.getChangelog();
+        data.projectId = queueData.getProjectId();
+        data.userId = queueData.getUserId();
 
         try {
 
@@ -75,7 +81,7 @@ public class ProcessingProcedure {
             // various processing steps. This directory will be deleted during
             // the cleanup step but can be used as a shared storage between
             // processing steps while the procedure is still active.
-            workingDir = Files.createTempDirectory("Hilo-" + queueData.fileId);
+            workingDir = Files.createTempDirectory("Hilo-" + queueData.getId());
         }
 
         catch (final IOException e) {

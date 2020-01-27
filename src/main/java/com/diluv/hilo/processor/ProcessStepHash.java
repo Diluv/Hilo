@@ -7,8 +7,8 @@ import java.nio.file.Path;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Logger;
 
+import com.diluv.confluencia.database.record.FileQueueRecord;
 import com.diluv.hilo.data.FileData;
-import com.diluv.hilo.data.QueueData;
 
 /**
  * This processing step is responsible for calculating the SHA 512 hash of a
@@ -35,7 +35,7 @@ public class ProcessStepHash implements IProcessStep {
     }
 
     @Override
-    public void process (Logger log, FileData data, QueueData queueData, Path workingDir, Path file, String extension) throws Exception {
+    public void process (Logger log, FileData data, FileQueueRecord queueData, Path workingDir, Path file, String extension) throws Exception {
 
         try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(file))) {
 
@@ -50,7 +50,7 @@ public class ProcessStepHash implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Logger log, FileData data, QueueData queueData, Path file, String extension) throws Exception {
+    public boolean validate (Logger log, FileData data, FileQueueRecord queueData, Path file, String extension) throws Exception {
 
         return true;
     }
