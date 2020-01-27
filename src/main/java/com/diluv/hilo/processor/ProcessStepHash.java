@@ -39,7 +39,7 @@ public class ProcessStepHash implements IProcessStep {
 
         try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(file))) {
 
-            data.sha512 = DigestUtils.sha256Hex(bis);
+            data.sha512 = DigestUtils.sha512Hex(bis);
         }
     }
 
