@@ -11,7 +11,7 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 
-import com.diluv.confluencia.database.record.FileQueueRecord;
+import com.diluv.confluencia.database.record.ProjectFileQueueRecord;
 import com.diluv.hilo.data.FileData;
 
 /**
@@ -47,7 +47,7 @@ public class ProcessStepGZip implements IProcessStep {
     }
 
     @Override
-    public void process (Logger log, FileData data, FileQueueRecord queueData, Path workingDir, Path file, String extension) throws Exception {
+    public void process (Logger log, FileData data, ProjectFileQueueRecord queueData, Path workingDir, Path file, String extension) throws Exception {
 
         final Path outputPath = workingDir.resolve(file.getFileName() + ".gz");
 
@@ -65,7 +65,7 @@ public class ProcessStepGZip implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Logger log, FileData data, FileQueueRecord queueData, Path file, String extension) throws Exception {
+    public boolean validate (Logger log, FileData data, ProjectFileQueueRecord queueData, Path file, String extension) throws Exception {
 
         return !"gz".equalsIgnoreCase(extension) && !"br".equalsIgnoreCase(extension);
     }

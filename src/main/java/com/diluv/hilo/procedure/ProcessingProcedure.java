@@ -8,12 +8,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
-import com.diluv.confluencia.database.record.FileQueueRecord;
-import com.diluv.hilo.data.FileData;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.util.FileUtils;
 
+import com.diluv.confluencia.database.record.ProjectFileQueueRecord;
+import com.diluv.hilo.data.FileData;
 import com.diluv.hilo.processor.IProcessStep;
 
 /**
@@ -58,7 +57,7 @@ public class ProcessingProcedure {
         return this;
     }
 
-    public FileData processFile (Path input, FileQueueRecord queueData) {
+    public FileData processFile (Path input, ProjectFileQueueRecord queueData) {
 
         /**
          * SETUP

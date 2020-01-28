@@ -7,7 +7,7 @@ import java.util.List;
 import com.diluv.confluencia.Confluencia;
 import com.diluv.confluencia.database.FileDatabase;
 import com.diluv.confluencia.database.dao.FileDAO;
-import com.diluv.confluencia.database.record.FileQueueRecord;
+import com.diluv.confluencia.database.record.ProjectFileQueueRecord;
 import com.diluv.hilo.utils.Constants;
 
 public class Hilo {
@@ -18,7 +18,7 @@ public class Hilo {
 
         final FileDAO fileDAO = new FileDatabase();
         try {
-            final List<FileQueueRecord> projectFiles = fileDAO.getLatestFileQueueRecord(10);
+            final List<ProjectFileQueueRecord> projectFiles = fileDAO.getLatestFileQueueRecord(10);
             System.out.println(projectFiles);
         }
         catch (final SQLTransactionRollbackException e) {

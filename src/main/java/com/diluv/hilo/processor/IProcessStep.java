@@ -4,7 +4,7 @@ import java.nio.file.Path;
 
 import org.apache.logging.log4j.Logger;
 
-import com.diluv.confluencia.database.record.FileQueueRecord;
+import com.diluv.confluencia.database.record.ProjectFileQueueRecord;
 import com.diluv.hilo.data.FileData;
 
 public interface IProcessStep {
@@ -29,7 +29,7 @@ public interface IProcessStep {
      *     step will be caught by the procedure. In this happens the
      *     procedure will end and report that the procedure failed.
      */
-    void process (Logger log, FileData data, FileQueueRecord queueData, Path workingDir, Path file, String extension) throws Exception;
+    void process (Logger log, FileData data, ProjectFileQueueRecord queueData, Path workingDir, Path file, String extension) throws Exception;
 
     /**
      * Gets a name for the process step. This is used to identify the processing
@@ -62,5 +62,5 @@ public interface IProcessStep {
      *     step will be caught by the procedure. In this happens the
      *     procedure will end and report that the procedure failed.
      */
-    boolean validate (Logger log, FileData data, FileQueueRecord queueData, Path file, String extension) throws Exception;
+    boolean validate (Logger log, FileData data, ProjectFileQueueRecord queueData, Path file, String extension) throws Exception;
 }
