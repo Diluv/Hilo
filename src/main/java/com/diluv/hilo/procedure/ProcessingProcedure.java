@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.util.FileUtils;
 
-import com.diluv.confluencia.database.record.ProjectFileQueueRecord;
+import com.diluv.confluencia.database.record.ProjectFileRecord;
 import com.diluv.hilo.data.FileData;
 import com.diluv.hilo.processor.IProcessStep;
 
@@ -57,7 +57,7 @@ public class ProcessingProcedure {
         return this;
     }
 
-    public FileData processFile (Path input, ProjectFileQueueRecord queueData) {
+    public FileData processFile (Path input, ProjectFileRecord queueData) {
 
         /**
          * SETUP

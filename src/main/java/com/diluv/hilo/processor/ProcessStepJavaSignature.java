@@ -12,7 +12,7 @@ import java.util.jar.JarFile;
 
 import org.apache.logging.log4j.Logger;
 
-import com.diluv.confluencia.database.record.ProjectFileQueueRecord;
+import com.diluv.confluencia.database.record.ProjectFileRecord;
 import com.diluv.hilo.data.FileData;
 
 /**
@@ -34,7 +34,7 @@ public class ProcessStepJavaSignature implements IProcessStep {
     }
 
     @Override
-    public void process (Logger log, FileData data, ProjectFileQueueRecord queueData, Path workingDir, Path file, String extension) throws Exception {
+    public void process (Logger log, FileData data, ProjectFileRecord queueData, Path workingDir, Path file, String extension) throws Exception {
 
         SignedStatus signedStatus = SignedStatus.UNREADABLE;
         final Set<CodeSigner> signers = new HashSet<>();
@@ -109,7 +109,7 @@ public class ProcessStepJavaSignature implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Logger log, FileData data, ProjectFileQueueRecord queueData, Path file, String extension) throws Exception {
+    public boolean validate (Logger log, FileData data, ProjectFileRecord queueData, Path file, String extension) throws Exception {
 
         return "jar".equalsIgnoreCase(extension);
     }

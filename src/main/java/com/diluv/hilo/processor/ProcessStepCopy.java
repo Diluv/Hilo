@@ -6,7 +6,7 @@ import java.nio.file.Path;
 
 import org.apache.logging.log4j.Logger;
 
-import com.diluv.confluencia.database.record.ProjectFileQueueRecord;
+import com.diluv.confluencia.database.record.ProjectFileRecord;
 import com.diluv.hilo.data.FileData;
 
 /**
@@ -34,7 +34,7 @@ public class ProcessStepCopy implements IProcessStep {
     }
 
     @Override
-    public void process (Logger log, FileData data, ProjectFileQueueRecord queueData, Path workingDir, Path file, String extension) throws Exception {
+    public void process (Logger log, FileData data, ProjectFileRecord queueData, Path workingDir, Path file, String extension) throws Exception {
 
         try {
 
@@ -49,7 +49,7 @@ public class ProcessStepCopy implements IProcessStep {
     }
 
     @Override
-    public boolean validate (Logger log, FileData data, ProjectFileQueueRecord queueData, Path file, String extension) throws Exception {
+    public boolean validate (Logger log, FileData data, ProjectFileRecord queueData, Path file, String extension) throws Exception {
 
         // File#exists is faster that Files#exists
         return file.toFile().exists();
