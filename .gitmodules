@@ -1,0 +1,3 @@
+[submodule "confluencia"]
+	path = confluencia
+	url = https://github.com/Diluv/Confluencia
