@@ -15,16 +15,16 @@ import com.diluv.confluencia.database.dao.ProjectDAO;
 import com.diluv.confluencia.database.dao.UserDAO;
 
 public class Database {
-
+    
     public final GameDAO gameDAO;
     public final ProjectDAO projectDAO;
-    public final FileDAO fileDAO ;
-    public final UserDAO userDAO ;
-    public final EmailDAO emailDAO ;
-    public final NewsDAO newsDAO ;
-
-    public Database () {
-
+    public final FileDAO fileDAO;
+    public final UserDAO userDAO;
+    public final EmailDAO emailDAO;
+    public final NewsDAO newsDAO;
+    
+    public Database() {
+        
         this.gameDAO = new GameDatabase();
         this.projectDAO = new ProjectDatabase();
         this.fileDAO = new FileDatabase();
@@ -32,9 +32,9 @@ public class Database {
         this.emailDAO = new EmailDatabase();
         this.newsDAO = new NewsDatabase();
     }
-
-    public Database (GameDAO gameDAO, ProjectDAO projectDAO, FileDAO fileDAO, UserDAO userDAO, EmailDAO emailDAO, NewsDAO newsDAO) {
-
+    
+    public Database(GameDAO gameDAO, ProjectDAO projectDAO, FileDAO fileDAO, UserDAO userDAO, EmailDAO emailDAO, NewsDAO newsDAO) {
+        
         this.gameDAO = gameDAO;
         this.projectDAO = projectDAO;
         this.fileDAO = fileDAO;
@@ -42,9 +42,9 @@ public class Database {
         this.emailDAO = emailDAO;
         this.newsDAO = newsDAO;
     }
-
+    
     public void init (String host, String user, String password, boolean deleteAll) {
-
+        
         Confluencia.init(host, user, password, deleteAll);
     }
 }
