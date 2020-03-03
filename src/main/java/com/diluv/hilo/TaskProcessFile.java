@@ -61,7 +61,7 @@ public class TaskProcessFile implements Runnable {
     
     private void cleanup () throws Exception {
         
-        FileUtil.delete(workingDir);
+        FileUtil.delete(this.workingDir);
     }
     
     private void retry () {

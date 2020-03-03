@@ -19,7 +19,7 @@ public class FileUtil {
         return new File(Constants.PROCESSING_FOLDER, game + "/" + type + "/" + fileRecord.getProjectId() + "/" + fileRecord.getId() + "/" + fileRecord.getName());
     }
     
-    public static void delete(Path path) {
+    public static void delete (Path path) {
         
         try (Stream<Path> stream = Files.walk(path)) {
             
