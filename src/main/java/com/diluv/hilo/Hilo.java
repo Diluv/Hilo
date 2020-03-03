@@ -50,18 +50,17 @@ public class Hilo {
         try {
             
             final List<ProjectFileRecord> projectFiles = Main.DATABASE.fileDAO.getLatestFiles(this.getOpenProcessingThreads());
-            Main.LOGGER.info("Enqued {} new files.");
+            Main.LOGGER.info("Enqued {} new files.", projectFiles.size());
             projectFiles.forEach(file -> this.processingExecutor.submit(new TaskProcessFile(file, this.procedure)));
         }
         
         catch (final SQLTransactionRollbackException e) {
-            // TODO Couldn't get a lock (Aka something is causing a lock aka
-            // another thread), try again
+            // Something happened in the DB
         }
         
         catch (final SQLException e) {
             
-            e.printStackTrace();
+            // Something else happened
         }
         
         try {
@@ -71,8 +70,8 @@ public class Hilo {
         }
         
         catch (final InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            
+            // Polling failed
         }
     }
     
