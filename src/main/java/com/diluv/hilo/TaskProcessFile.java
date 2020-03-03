@@ -1,11 +1,6 @@
 package com.diluv.hilo;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Comparator;
-import java.util.stream.Stream;
 
 import com.diluv.confluencia.database.record.ProjectFileRecord;
 import com.diluv.hilo.procedure.ProcessingProcedure;
@@ -66,15 +61,7 @@ public class TaskProcessFile implements Runnable {
     
     private void cleanup () throws Exception {
         
-        try (Stream<Path> stream = Files.walk(this.workingDir)) {
-            
-            stream.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-        }
-        
-        catch (final IOException e) {
-            
-            // TODO do we want to retry?
-        }
+        FileUtil.delete(workingDir);
     }
     
     private void retry () {

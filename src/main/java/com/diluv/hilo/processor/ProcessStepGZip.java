@@ -11,6 +11,7 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.IOUtils;
 
 import com.diluv.confluencia.database.record.ProjectFileRecord;
+import com.diluv.hilo.utils.FileUtil;
 
 /**
  * This processing step will write a file using GZip compression.
@@ -40,6 +41,11 @@ public class ProcessStepGZip implements IProcessStep {
     public void process (ProjectFileRecord fileRecord, Path toProcess, Path parentDir, String extension) throws Exception {
         
         final Path gzipOutput = parentDir.resolve(toProcess.getFileName() + ".gz");
+        
+        if (gzipOutput.toFile().exists()) {
+            
+            FileUtil.delete(gzipOutput);
+        }
         
         try (GZIPOutputStream gzipOut = new GZipCompressionStream(Files.newOutputStream(gzipOutput)); InputStream inputStream = Files.newInputStream(toProcess)) {
             
