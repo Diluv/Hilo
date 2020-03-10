@@ -22,6 +22,7 @@ import com.diluv.hilo.Main;
 public class Constants {
     
     public static final PGPSecretKey SIGNING_KEY = readSigningKey(new File("private.gpg"));
+    public static final char[] PGP_PASS = getValueOrError("PGP_PASS").toCharArray();
     public static final String DB_HOSTNAME = getValueOrDefault("DB_HOSTNAME", "jdbc:mariadb://localhost:3306/diluv");
     public static final String DB_USERNAME = getValueOrDefault("DB_USERNAME", "root");
     public static final String DB_PASSWORD = getValueOrDefault("DB_PASSWORD", "");
@@ -45,9 +46,20 @@ public class Constants {
     
     static PGPSecretKey readSigningKey (File in) {
         
-        try (FileInputStream fis = new FileInputStream(in)) {
+        try (InputStream input = PGPUtil.getDecoderStream(new ByteArrayInputStream(getStreamAsBytes(new FileInputStream(in))))) {
             
-            return readSigningKey(fis);
+            final PGPSecretKeyRingCollection keyRings = new PGPSecretKeyRingCollection(input, new BcKeyFingerprintCalculator());
+            
+            for (final PGPSecretKeyRing keyRing : keyRings) {
+                
+                for (final PGPSecretKey key : keyRing) {
+                    
+                    if (key.isSigningKey()) {
+                        
+                        return key;
+                    }
+                }
+            }
         }
         
         catch (final FileNotFoundException e) {
@@ -70,27 +82,6 @@ public class Constants {
         return null;
     }
     
-    static PGPSecretKey readSigningKey (InputStream in) throws IOException, PGPException {
-        
-        try (InputStream input = PGPUtil.getDecoderStream(new ByteArrayInputStream(getStreamAsBytes(in)))) {
-            
-            final PGPSecretKeyRingCollection keyRings = new PGPSecretKeyRingCollection(input, new BcKeyFingerprintCalculator());
-            
-            for (final PGPSecretKeyRing keyRing : keyRings) {
-                
-                for (final PGPSecretKey key : keyRing) {
-                    
-                    if (key.isSigningKey()) {
-                        
-                        return key;
-                    }
-                }
-            }
-        }
-        
-        return null;
-    }
-    
     static byte[] getStreamAsBytes (InputStream input) throws IOException {
         
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -104,5 +95,17 @@ public class Constants {
         
         final String value = System.getenv(name);
         return value == null ? defaultValue : Integer.parseInt(value);
+    }
+    
+    static String getValueOrError(String name) {
+        
+        final String value = System.getenv(name);
+        
+        if (value == null) {
+            
+            throw new IllegalStateException("The required environmental variable " + name + " was not found.");
+        }
+        
+        return value;
     }
 }
