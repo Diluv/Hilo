@@ -43,27 +43,22 @@ public class ProcessStepASC implements IProcessStep {
     @Override
     public void process (ProjectFileRecord fileRecord, Path toProcess, Path parentDir, String extension) throws Exception {
         
-        final Path output = parentDir.resolve(toProcess.getFileName() + ".sha512.asc");
-
+        final Path output = parentDir.resolve(toProcess.getFileName() + ".asc");
+        
         try (InputStream fileIn = new BufferedInputStream(new FileInputStream(toProcess.toFile()))) {
             
             try (ArmoredOutputStream armorOut = new ArmoredOutputStream(new FileOutputStream(output.toFile())); BCPGOutputStream bcpgOut = new BCPGOutputStream(armorOut);) {
-                
-                armorOut.setHeader("FileName", fileRecord.getName());
-                armorOut.setHeader("SHA-512", fileRecord.getSha512());
-                armorOut.setHeader("Uploader", Long.toString(fileRecord.getUserId()));
-                armorOut.setHeader("CreatedAt", Long.toString(fileRecord.getCreatedAt()));
                 
                 final PGPPrivateKey privateKey = this.pgpSecret.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider("BC").build(this.pass));
                 final PGPSignatureGenerator sigGenerator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(this.pgpSecret.getPublicKey().getAlgorithm(), HashAlgorithmTags.SHA512).setProvider("BC"));
                 
                 sigGenerator.init(PGPSignature.BINARY_DOCUMENT, privateKey);
                 
-                byte nextByte;
+                int nextByte;
                 
-                while ((nextByte = (byte) fileIn.read()) != -1) {
+                while ((nextByte = fileIn.read()) != -1) {
                     
-                    sigGenerator.update(nextByte);
+                    sigGenerator.update((byte) nextByte);
                 }
                 
                 sigGenerator.generate().encode(bcpgOut);
