@@ -1,10 +1,10 @@
 package com.diluv.hilo;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.diluv.confluencia.database.record.FileProcessingStatus;
 import com.diluv.confluencia.database.record.ProjectFileRecord;
 import com.diluv.hilo.procedure.ProcessingProcedure;
 import com.diluv.hilo.utils.FileUtil;
@@ -60,23 +60,20 @@ public class TaskProcessFile implements Runnable {
 
     private void finish () throws Exception {
 
-        try {
+        File file = FileUtil.getNodeCDNLocation(this.record);
+        file.getParentFile().mkdirs();
+        Files.copy(this.inputFile, file.toPath());
 
-            File file = FileUtil.getNodeCDNLocation(this.record);
-            file.getParentFile().mkdirs();
-            Files.copy(this.inputFile, file.toPath());
-        }
-
-        catch (final IOException e) {
-
-            Main.LOGGER.error("Failed to copy file with id {} to NodeCDN directory.", this.record.getId());
-            Main.LOGGER.catching(e);
+        if (!Main.DATABASE.fileDAO.updateStatusById(FileProcessingStatus.SUCCESS, this.record.getId())) {
+            //TODO
         }
     }
 
     private void cleanup () throws Exception {
 
-        FileUtil.delete(this.workingDir);
+        if (Main.CLEAN_UP) {
+            FileUtil.delete(this.workingDir);
+        }
     }
 
     private void retry () {

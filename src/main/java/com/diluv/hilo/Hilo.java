@@ -32,12 +32,12 @@ public class Hilo {
      * Constructs a new hilo instance.
      *
      * @param threadCount The amount of file processing threads to use. Each thread will handle
-     *        one file.
+     *     one file.
      * @param procedure The procedure to use when processing files.
      */
-    public Hilo(int threadCount, ProcessingProcedure procedure) {
+    public Hilo (int threadCount, ProcessingProcedure procedure) {
 
-        this.processingExecutor = new ThreadPoolExecutor(threadCount, threadCount, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        this.processingExecutor = new ThreadPoolExecutor(threadCount, threadCount, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
         this.procedure = procedure;
     }
 
@@ -55,7 +55,7 @@ public class Hilo {
         try {
 
             final List<ProjectFileRecord> projectFiles = Main.DATABASE.fileDAO.getLatestFiles(this.getOpenProcessingThreads());
-            Main.LOGGER.info("Enqued {} new files.", projectFiles.size());
+            Main.LOGGER.info("Enqueued {} new files.", projectFiles.size());
             projectFiles.forEach(file -> this.processingExecutor.submit(new TaskProcessFile(file, this.procedure)));
         }
 
@@ -70,8 +70,10 @@ public class Hilo {
 
         try {
 
-            Thread.sleep(1000 * 30L);
-            this.poll();
+            if(Main.RUNNING) {
+                Thread.sleep(1000 * 30L);
+                this.poll();
+            }
         }
 
         catch (final InterruptedException e) {
