@@ -12,9 +12,19 @@ import com.diluv.hilo.Main;
 
 public class FileUtil {
 
-    public static File getLocation (ProjectFileRecord fileRecord) {
+    public static File getProcessingLocation (ProjectFileRecord fileRecord) {
 
-        return new File(Constants.PROCESSING_FOLDER, String.format("%s/%s/%s/%s/%s", fileRecord.getGameSlug(), fileRecord.getProjectTypeSlug(), fileRecord.getProjectId(), fileRecord.getId(), fileRecord.getName()));
+        return getLocation(Constants.PROCESSING_FOLDER, fileRecord);
+    }
+
+    public static File getNodeCDNLocation (ProjectFileRecord fileRecord) {
+
+        return getLocation(Constants.NODECDN_FOLDER, fileRecord);
+    }
+
+    public static File getLocation (String path, ProjectFileRecord fileRecord) {
+
+        return new File(path, String.format("%s/%s/%s/%s/%s", fileRecord.getGameSlug(), fileRecord.getProjectTypeSlug(), fileRecord.getProjectId(), fileRecord.getId(), fileRecord.getName()));
     }
 
     public static void delete (Path path) {
