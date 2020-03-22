@@ -1,13 +1,14 @@
 package com.diluv.hilo;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import com.diluv.confluencia.database.record.FileProcessingStatus;
 import com.diluv.confluencia.database.record.ProjectFileRecord;
 import com.diluv.hilo.procedure.ProcessingProcedure;
 import com.diluv.hilo.utils.FileUtil;
+
+import org.apache.commons.io.FileUtils;
 
 public class TaskProcessFile implements Runnable {
 
@@ -62,7 +63,7 @@ public class TaskProcessFile implements Runnable {
 
         File file = FileUtil.getNodeCDNLocation(this.record);
         file.getParentFile().mkdirs();
-        Files.copy(this.inputFile, file.toPath());
+        FileUtils.copyDirectory(this.workingDir.toFile(), file);
 
         if (!Main.DATABASE.fileDAO.updateStatusById(FileProcessingStatus.SUCCESS, this.record.getId())) {
             //TODO

@@ -14,17 +14,12 @@ public class FileUtil {
 
     public static File getProcessingLocation (ProjectFileRecord fileRecord) {
 
-        return getLocation(Constants.PROCESSING_FOLDER, fileRecord);
+        return new File(Constants.PROCESSING_FOLDER, String.format("%s/%s/%s/%s/%s", fileRecord.getGameSlug(), fileRecord.getProjectTypeSlug(), fileRecord.getProjectId(), fileRecord.getId(), fileRecord.getName()));
     }
 
     public static File getNodeCDNLocation (ProjectFileRecord fileRecord) {
 
-        return getLocation(Constants.NODECDN_FOLDER, fileRecord);
-    }
-
-    public static File getLocation (String path, ProjectFileRecord fileRecord) {
-
-        return new File(path, String.format("%s/%s/%s/%s/%s", fileRecord.getGameSlug(), fileRecord.getProjectTypeSlug(), fileRecord.getProjectId(), fileRecord.getId(), fileRecord.getName()));
+        return new File(Constants.NODECDN_FOLDER, String.format("%s/%s/%s/%s", fileRecord.getGameSlug(), fileRecord.getProjectTypeSlug(), fileRecord.getProjectId(), fileRecord.getId()));
     }
 
     public static void delete (Path path) {

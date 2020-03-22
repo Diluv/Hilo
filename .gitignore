@@ -226,3 +226,5 @@ build/
 *.pem
 *.gpg
 nodecdn/
+*.asc
+*.gz
