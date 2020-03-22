@@ -24,6 +24,7 @@ dependencies {
     implementation group: 'org.bouncycastle', name: 'bcpg-jdk15on', version: '1.64'
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.6.0'
+    testImplementation project(path: ':Confluencia', configuration: 'testOutput')
 }
 
 test {
