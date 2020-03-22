@@ -20,7 +20,7 @@ public class TaskProcessFile implements Runnable {
     public TaskProcessFile (ProjectFileRecord record, ProcessingProcedure procedure) {
 
         this.record = record;
-        this.inputFile = FileUtil.getNodeCDNLocation(this.record).toPath();
+        this.inputFile = FileUtil.getProcessingLocation(this.record).toPath();
         this.workingDir = this.inputFile.getParent();
         this.procedure = procedure;
     }
