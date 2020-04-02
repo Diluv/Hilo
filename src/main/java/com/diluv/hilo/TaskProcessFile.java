@@ -2,6 +2,7 @@ package com.diluv.hilo;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.sql.SQLException;
 
 import com.diluv.confluencia.database.record.FileProcessingStatus;
 import com.diluv.confluencia.database.record.ProjectFileRecord;
@@ -83,7 +84,14 @@ public class TaskProcessFile implements Runnable {
 
         if (this.attempts > 3) {
 
-            // TODO failed
+            try {
+                if (!Main.DATABASE.fileDAO.updateStatusById(FileProcessingStatus.FAILED_INTERNAL_SERVER_ERROR, this.record.getId())) {
+                    //TODO
+                }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         else {
