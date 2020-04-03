@@ -222,9 +222,10 @@ pip-log.txt
 .mr.developer.cfg
 
 .gradle/
-build/
+nodecdn/
+processing/
+
 *.pem
 *.gpg
-nodecdn/
 *.asc
 *.gz

@@ -50,7 +50,9 @@ public class TaskProcessFile implements Runnable {
     private void setup () throws Exception {
 
         if (!this.inputFile.toFile().exists()) {
-
+            if (!Main.DATABASE.fileDAO.updateStatusById(FileProcessingStatus.FAILED_INVALID_FILE, this.record.getId())) {
+                //TODO error to discord or central location
+            }
             throw new IllegalStateException("The target file does not exist. Expected a file at " + this.inputFile);
         }
     }
@@ -67,15 +69,13 @@ public class TaskProcessFile implements Runnable {
         FileUtils.copyDirectory(this.workingDir.toFile(), file);
 
         if (!Main.DATABASE.fileDAO.updateStatusById(FileProcessingStatus.SUCCESS, this.record.getId())) {
-            //TODO
+            //TODO error to discord or central location
         }
     }
 
     private void cleanup () throws Exception {
 
-        if (Main.CLEAN_UP) {
-            FileUtil.delete(this.workingDir);
-        }
+        FileUtil.delete(this.workingDir);
     }
 
     private void retry () {
@@ -86,7 +86,7 @@ public class TaskProcessFile implements Runnable {
 
             try {
                 if (!Main.DATABASE.fileDAO.updateStatusById(FileProcessingStatus.FAILED_INTERNAL_SERVER_ERROR, this.record.getId())) {
-                    //TODO
+                    //TODO error to discord or central location
                 }
             }
             catch (SQLException e) {
