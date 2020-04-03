@@ -113,8 +113,8 @@ public class HiloTest {
         this.check(FileProcessingStatus.RUNNING, 0);
         this.check(FileProcessingStatus.SUCCESS, 5);
         this.check(FileProcessingStatus.FAILED_UNSPECIFIED, 0);
-        this.check(FileProcessingStatus.FAILED_INTERNAL_SERVER_ERROR, 0);
-        this.check(FileProcessingStatus.FAILED_MALWARE_DETECTED, 2);
+        this.check(FileProcessingStatus.FAILED_INTERNAL_SERVER_ERROR, 1);
+        this.check(FileProcessingStatus.FAILED_MALWARE_DETECTED, 1);
         this.check(FileProcessingStatus.FAILED_MALWARE_SCAN_TIMEOUT, 0);
         this.check(FileProcessingStatus.FAILED_INVALID_FILE, 0);
     }

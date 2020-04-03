@@ -23,52 +23,52 @@ import com.diluv.confluencia.database.record.ProjectFileRecord;
  * input file.
  */
 public class ProcessStepASC implements IProcessStep {
-    
+
     /**
      * The secret key to use when generating signatures.
      */
     final PGPSecretKey pgpSecret;
-    
+
     /**
      * An array containing the password used alongside the secret key.
      */
     final char[] pass;
-    
-    public ProcessStepASC(PGPSecretKey key, char[] pass) {
-        
+
+    public ProcessStepASC (PGPSecretKey key, char[] pass) {
+
         this.pgpSecret = key;
         this.pass = pass;
     }
-    
+
     @Override
     public void process (ProjectFileRecord fileRecord, Path toProcess, Path parentDir, String extension) throws Exception {
-        
+
         final Path output = parentDir.resolve(toProcess.getFileName() + ".asc");
-        
+
         try (InputStream fileIn = new BufferedInputStream(new FileInputStream(toProcess.toFile()))) {
-            
-            try (ArmoredOutputStream armorOut = new ArmoredOutputStream(new FileOutputStream(output.toFile())); BCPGOutputStream bcpgOut = new BCPGOutputStream(armorOut);) {
-                
+
+            try (FileOutputStream stream = new FileOutputStream(output.toFile()); ArmoredOutputStream armorOut = new ArmoredOutputStream(stream); BCPGOutputStream bcpgOut = new BCPGOutputStream(armorOut);) {
+
                 final PGPPrivateKey privateKey = this.pgpSecret.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider("BC").build(this.pass));
                 final PGPSignatureGenerator sigGenerator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(this.pgpSecret.getPublicKey().getAlgorithm(), HashAlgorithmTags.SHA512).setProvider("BC"));
-                
+
                 sigGenerator.init(PGPSignature.BINARY_DOCUMENT, privateKey);
-                
+
                 int nextByte;
-                
+
                 while ((nextByte = fileIn.read()) != -1) {
-                    
+
                     sigGenerator.update((byte) nextByte);
                 }
-                
+
                 sigGenerator.generate().encode(bcpgOut);
             }
         }
     }
-    
+
     @Override
     public boolean validate (ProjectFileRecord fileRecord, Path toProcess, Path parentDir, String extension) throws Exception {
-        
+
         return !"asc".equalsIgnoreCase(extension);
     }
 }
