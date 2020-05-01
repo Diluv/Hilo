@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.images.PullPolicy;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.diluv.clamchowder.ClamClient;
@@ -40,6 +41,7 @@ public class HiloTest {
         MYSQL_CONTAINER.start();
 
         CLAMAV = new GenericContainer<>("diluv/clamav")
+            .withImagePullPolicy(PullPolicy.alwaysPull())
             .withExposedPorts(3310)
             .waitingFor(Wait.forHealthcheck().withStartupTimeout(Duration.ofMinutes(5)));
         CLAMAV.start();
