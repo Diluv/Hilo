@@ -3,7 +3,7 @@ plugins {
     id 'com.google.cloud.tools.jib' version '2.2.0'
 }
 
-version = "${project_version}" + (isSnapshot() ? '+' + getBuildNumber() : '')
+version = "${project_version}" + (isSnapshot() ? '.' + getBuildNumber() : '')
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
