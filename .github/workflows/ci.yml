@@ -31,6 +31,8 @@ jobs:
 
       - name: Testing Building
         run: ./gradlew test
+        env:
+          PGP_PASS: ZQz7MqGSX5AQb3XQ
 
       - name: Build and deploy with Jib
         run: ./gradlew jib

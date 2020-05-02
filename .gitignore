@@ -226,6 +226,5 @@ nodecdn/
 processing/
 
 *.pem
-*.gpg
 *.asc
 *.gz
