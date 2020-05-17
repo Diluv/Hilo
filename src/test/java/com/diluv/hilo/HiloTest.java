@@ -61,7 +61,7 @@ public class HiloTest {
 
             Confluencia.init(MYSQL_CONTAINER.getJdbcUrl(), MYSQL_CONTAINER.getUsername(), MYSQL_CONTAINER.getPassword(), false);
 
-            File virus = new File(Constants.PROCESSING_FOLDER, "minecraft/mods/1/6/malware.txt");
+            File virus = new File(Constants.PROCESSING_FOLDER, "minecraft-je/mods/1/6/malware.txt");
             virus.getParentFile().mkdirs();
             try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(virus), Charset.defaultCharset()))) {
                 writer.write("X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*");
