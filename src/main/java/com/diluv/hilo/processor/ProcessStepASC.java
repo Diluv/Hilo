@@ -16,7 +16,7 @@ import org.bouncycastle.openpgp.PGPSignatureGenerator;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 
-import com.diluv.confluencia.database.record.ProjectFileRecord;
+import com.diluv.confluencia.database.record.ProjectFilesEntity;
 
 /**
  * This processing step will generate a new detached signature file for the SHA512 of a given
@@ -41,7 +41,7 @@ public class ProcessStepASC implements IProcessStep {
     }
 
     @Override
-    public void process (ProjectFileRecord fileRecord, Path toProcess, Path parentDir, String extension) throws Exception {
+    public void process (ProjectFilesEntity fileRecord, Path toProcess, Path parentDir, String extension) throws Exception {
 
         final Path output = parentDir.resolve(toProcess.getFileName() + ".asc");
 
@@ -67,7 +67,7 @@ public class ProcessStepASC implements IProcessStep {
     }
 
     @Override
-    public boolean validate (ProjectFileRecord fileRecord, Path toProcess, Path parentDir, String extension) throws Exception {
+    public boolean validate (ProjectFilesEntity fileRecord, Path toProcess, Path parentDir, String extension) throws Exception {
 
         return !"asc".equalsIgnoreCase(extension);
     }

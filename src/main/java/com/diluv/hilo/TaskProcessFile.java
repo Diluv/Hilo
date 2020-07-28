@@ -2,24 +2,23 @@ package com.diluv.hilo;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.sql.SQLException;
-
-import com.diluv.confluencia.database.record.FileProcessingStatus;
-import com.diluv.confluencia.database.record.ProjectFileRecord;
-import com.diluv.hilo.procedure.ProcessingProcedure;
-import com.diluv.hilo.utils.FileUtil;
 
 import org.apache.commons.io.FileUtils;
+
+import com.diluv.confluencia.database.record.FileProcessingStatus;
+import com.diluv.confluencia.database.record.ProjectFilesEntity;
+import com.diluv.hilo.procedure.ProcessingProcedure;
+import com.diluv.hilo.utils.FileUtil;
 
 public class TaskProcessFile implements Runnable {
 
     private final ProcessingProcedure procedure;
-    private final ProjectFileRecord record;
+    private final ProjectFilesEntity record;
     private final Path inputFile;
     private final Path workingDir;
     private int attempts = 0;
 
-    public TaskProcessFile (ProjectFileRecord record, ProcessingProcedure procedure) {
+    public TaskProcessFile (ProjectFilesEntity record, ProcessingProcedure procedure) {
 
         this.record = record;
         this.inputFile = FileUtil.getProcessingLocation(this.record).toPath();
@@ -84,13 +83,8 @@ public class TaskProcessFile implements Runnable {
 
         if (this.attempts > 3) {
 
-            try {
-                if (!Main.DATABASE.fileDAO.updateStatusById(FileProcessingStatus.FAILED_INTERNAL_SERVER_ERROR, this.record.getId())) {
-                    //TODO error to discord or central location
-                }
-            }
-            catch (SQLException e) {
-                e.printStackTrace();
+            if (!Main.DATABASE.fileDAO.updateStatusById(FileProcessingStatus.FAILED_INTERNAL_SERVER_ERROR, this.record.getId())) {
+                //TODO error to discord or central location
             }
         }
 

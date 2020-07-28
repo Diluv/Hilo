@@ -7,44 +7,18 @@ import com.diluv.confluencia.database.NewsDatabase;
 import com.diluv.confluencia.database.ProjectDatabase;
 import com.diluv.confluencia.database.SecurityDatabase;
 import com.diluv.confluencia.database.UserDatabase;
-import com.diluv.confluencia.database.dao.FileDAO;
-import com.diluv.confluencia.database.dao.GameDAO;
-import com.diluv.confluencia.database.dao.NewsDAO;
-import com.diluv.confluencia.database.dao.ProjectDAO;
-import com.diluv.confluencia.database.dao.SecurityDAO;
-import com.diluv.confluencia.database.dao.UserDAO;
 
 public class Database {
-    
-    public final GameDAO gameDAO;
-    public final ProjectDAO projectDAO;
-    public final FileDAO fileDAO;
-    public final UserDAO userDAO;
-    public final SecurityDAO securityDAO;
-    public final NewsDAO newsDAO;
-    
-    public Database() {
-        
-        this.gameDAO = new GameDatabase();
-        this.projectDAO = new ProjectDatabase();
-        this.fileDAO = new FileDatabase();
-        this.userDAO = new UserDatabase();
-        this.securityDAO = new SecurityDatabase();
-        this.newsDAO = new NewsDatabase();
-    }
-    
-    public Database(GameDAO gameDAO, ProjectDAO projectDAO, FileDAO fileDAO, UserDAO userDAO, SecurityDatabase securityDAO, NewsDAO newsDAO) {
-        
-        this.gameDAO = gameDAO;
-        this.projectDAO = projectDAO;
-        this.fileDAO = fileDAO;
-        this.userDAO = userDAO;
-        this.securityDAO = securityDAO;
-        this.newsDAO = newsDAO;
-    }
-    
-    public void init (String host, String user, String password, boolean deleteAll) {
-        
-        Confluencia.init(host, user, password, deleteAll);
+
+    public final GameDatabase gameDAO = new GameDatabase();
+    public final ProjectDatabase projectDAO = new ProjectDatabase();
+    public final FileDatabase fileDAO = new FileDatabase();
+    public final UserDatabase userDAO = new UserDatabase();
+    public final SecurityDatabase securityDAO = new SecurityDatabase();
+    public final NewsDatabase newsDAO = new NewsDatabase();
+
+    public void init (String host, String user, String password) {
+
+        Confluencia.init(host, user, password);
     }
 }

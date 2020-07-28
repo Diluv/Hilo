@@ -15,7 +15,7 @@ import com.diluv.hilo.processor.ProcessStepGZip;
 import com.diluv.hilo.utils.Constants;
 
 public class Main {
-    
+
     public static final Logger LOGGER = LogManager.getLogger("Hilo");
     public static final Database DATABASE = new Database();
     public static ClamClient CLAM = new ClamClient(Constants.CLAM_HOSTNAME, Constants.CLAM_PORT, Constants.CLAM_TIMEOUT, Constants.CLAM_SIZE, Constants.CLAM_READ_BUFFER);
@@ -23,21 +23,21 @@ public class Main {
     public static boolean RUNNING = true;
 
     public static void main (String[] args) throws IOException {
-        
+
         Security.addProvider(new BouncyCastleProvider());
-        
-        DATABASE.init(Constants.DB_HOSTNAME, Constants.DB_USERNAME, Constants.DB_PASSWORD, false);
-        
+
+        DATABASE.init(Constants.DB_HOSTNAME, Constants.DB_USERNAME, Constants.DB_PASSWORD);
+
         if (CLAM.ping()) {
-            
+
             LOGGER.info("Succesfully connected to ClamAV.");
         }
-        
+
         else {
-            
+
             LOGGER.error("Failed to connect with ClamAV.");
         }
-        
+
         HILO.start();
     }
 }

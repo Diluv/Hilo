@@ -7,19 +7,29 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
-import com.diluv.confluencia.database.record.ProjectFileRecord;
+import com.diluv.confluencia.database.record.ProjectFilesEntity;
 import com.diluv.hilo.Main;
 
 public class FileUtil {
 
-    public static File getProcessingLocation (ProjectFileRecord fileRecord) {
+    public static File getProcessingLocation (ProjectFilesEntity file) {
 
-        return new File(Constants.PROCESSING_FOLDER, String.format("%s/%s/%s/%s/%s", fileRecord.getGameSlug(), fileRecord.getProjectTypeSlug(), fileRecord.getProjectId(), fileRecord.getId(), fileRecord.getName()));
+        final String gameSlug = file.getProject().getGame().getSlug();
+        final String projectTypeSlug = file.getProject().getProjectType().getSlug();
+        final long projectId = file.getProject().getId();
+        final long projectFileId = file.getId();
+        final String name = file.getName();
+        return new File(Constants.PROCESSING_FOLDER, String.format("%s/%s/%s/%s/%s", gameSlug, projectTypeSlug, projectId, projectFileId, name));
     }
 
-    public static File getNodeCDNLocation (ProjectFileRecord fileRecord) {
+    public static File getNodeCDNLocation (ProjectFilesEntity file) {
 
-        return new File(Constants.NODECDN_FOLDER, String.format("%s/%s/%s/%s", fileRecord.getGameSlug(), fileRecord.getProjectTypeSlug(), fileRecord.getProjectId(), fileRecord.getId()));
+        final String gameSlug = file.getProject().getGame().getSlug();
+        final String projectTypeSlug = file.getProject().getProjectType().getSlug();
+        final long projectId = file.getProject().getId();
+        final long projectFileId = file.getId();
+
+        return new File(Constants.NODECDN_FOLDER, String.format("%s/%s/%s/%s", gameSlug, projectTypeSlug, projectId, projectFileId));
     }
 
     public static void delete (Path path) {

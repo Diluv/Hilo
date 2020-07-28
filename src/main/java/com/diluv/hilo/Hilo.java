@@ -1,14 +1,12 @@
 package com.diluv.hilo;
 
-import java.sql.SQLException;
-import java.sql.SQLTransactionRollbackException;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.diluv.confluencia.database.record.FileProcessingStatus;
-import com.diluv.confluencia.database.record.ProjectFileRecord;
+import com.diluv.confluencia.database.record.ProjectFilesEntity;
 import com.diluv.hilo.procedure.ProcessingProcedure;
 
 /**
@@ -52,25 +50,13 @@ public class Hilo {
 
     private void poll () {
 
-        try {
-
-            final List<ProjectFileRecord> projectFiles = Main.DATABASE.fileDAO.getLatestFiles(this.getOpenProcessingThreads());
-            Main.LOGGER.info("Enqueued {} new files.", projectFiles.size());
-            projectFiles.forEach(file -> this.processingExecutor.submit(new TaskProcessFile(file, this.procedure)));
-        }
-
-        catch (final SQLTransactionRollbackException e) {
-            // Something happened in the DB
-        }
-
-        catch (final SQLException e) {
-
-            // Something else happened
-        }
+        final List<ProjectFilesEntity> projectFiles = Main.DATABASE.fileDAO.getLatestFiles(this.getOpenProcessingThreads());
+        Main.LOGGER.info("Enqueued {} new files.", projectFiles.size());
+        projectFiles.forEach(file -> this.processingExecutor.submit(new TaskProcessFile(file, this.procedure)));
 
         try {
 
-            if(Main.RUNNING) {
+            if (Main.RUNNING) {
                 Thread.sleep(1000 * 30L);
                 this.poll();
             }
