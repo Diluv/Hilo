@@ -93,12 +93,12 @@ public class Hilo {
             return;
         }
 
-        NodeCDNCommitsEntity commit = Confluencia.SECURITY.findAllNodeCDNCommits();
+        NodeCDNCommitsEntity commit = Confluencia.SECURITY.findOneNodeCDNCommits();
         if (commit != null) {
             if (System.currentTimeMillis() - commit.getCreatedAt().getTime() < TimeUnit.MINUTES.toMillis(5)) {
                 return;
             }
-            if (!Confluencia.SECURITY.updateNodeCDNCommits(commit.getId())) {
+            if (!Confluencia.SECURITY.updateNodeCDNCommits(commit)) {
                 throw new RuntimeException("Internal Server Error: Failed to update commit");
             }
         }
