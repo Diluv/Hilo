@@ -1,3 +1,6 @@
 [submodule "Confluencia"]
 	path = Confluencia
 	url = https://github.com/Diluv/Confluencia
+[submodule "NodeCDN-API"]
+	path = NodeCDN-API
+	url = https://github.com/Diluv/NodeCDN-Api/

@@ -1,11 +1,18 @@
 package com.diluv.hilo;
 
-import com.diluv.clamchowder.ClamClient;
-import com.diluv.confluencia.Confluencia;
-import com.diluv.confluencia.database.record.FileProcessingStatus;
-import com.diluv.confluencia.database.record.ProjectFilesEntity;
-import com.diluv.hilo.utils.Constants;
-import com.diluv.hilo.utils.FileUtil;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
+import java.security.Security;
+import java.time.Duration;
+import java.util.List;
+
+import com.diluv.nodecdn.NodeCDN;
 
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -18,11 +25,12 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.images.PullPolicy;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.*;
-import java.nio.charset.Charset;
-import java.security.Security;
-import java.time.Duration;
-import java.util.List;
+import com.diluv.clamchowder.ClamClient;
+import com.diluv.confluencia.Confluencia;
+import com.diluv.confluencia.database.record.FileProcessingStatus;
+import com.diluv.confluencia.database.record.ProjectFilesEntity;
+import com.diluv.hilo.utils.Constants;
+import com.diluv.hilo.utils.FileUtil;
 
 @Testcontainers
 public class HiloTest {
@@ -64,7 +72,7 @@ public class HiloTest {
                 e.printStackTrace();
             }
 
-            List<ProjectFilesEntity> files = Main.DATABASE.fileDAO.findAllWhereStatusAndLimit(FileProcessingStatus.PENDING, 100);
+            List<ProjectFilesEntity> files = Confluencia.FILE.findAllWhereStatusAndLimit(FileProcessingStatus.PENDING, 100);
             for (ProjectFilesEntity record : files) {
                 InputStream io = HiloTest.class.getResourceAsStream("/testfiles/" + record.getName());
                 if (io != null) {
@@ -91,8 +99,8 @@ public class HiloTest {
             try {
                 while (Main.RUNNING) {
                     Thread.sleep(1000);
-                    final List<ProjectFilesEntity> running = Main.DATABASE.fileDAO.findAllWhereStatusAndLimit(FileProcessingStatus.RUNNING, 5);
-                    final List<ProjectFilesEntity> pending = Main.DATABASE.fileDAO.findAllWhereStatusAndLimit(FileProcessingStatus.PENDING, 5);
+                    final List<ProjectFilesEntity> running = Confluencia.FILE.findAllWhereStatusAndLimit(FileProcessingStatus.RUNNING, 5);
+                    final List<ProjectFilesEntity> pending = Confluencia.FILE.findAllWhereStatusAndLimit(FileProcessingStatus.PENDING, 5);
                     if (running.size() == 0 && pending.size() == 0) {
                         Main.RUNNING = false;
                     }
@@ -117,7 +125,7 @@ public class HiloTest {
 
     public void check (FileProcessingStatus status, int expected) {
 
-        final List<ProjectFilesEntity> files = Main.DATABASE.fileDAO.findAllWhereStatusAndLimit(status, 100);
+        final List<ProjectFilesEntity> files = Confluencia.FILE.findAllWhereStatusAndLimit(status, 100);
         Assertions.assertEquals(expected, files.size());
     }
 }

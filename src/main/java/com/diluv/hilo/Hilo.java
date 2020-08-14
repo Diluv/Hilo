@@ -1,13 +1,24 @@
 package com.diluv.hilo;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.diluv.confluencia.Confluencia;
 import com.diluv.confluencia.database.record.FileProcessingStatus;
+import com.diluv.confluencia.database.record.NodeCDNCommitsEntity;
 import com.diluv.confluencia.database.record.ProjectFilesEntity;
 import com.diluv.hilo.procedure.ProcessingProcedure;
+import com.diluv.hilo.utils.Constants;
+import com.diluv.nodecdn.NodeCDN;
+import com.diluv.nodecdn.request.RequestCommit;
+import com.diluv.nodecdn.response.Response;
+import com.diluv.nodecdn.response.commits.head.ResponseCommitsHead;
 
 /**
  * Instances of Hilo are responsible for polling the database for newly created files. When new
@@ -26,6 +37,8 @@ public class Hilo {
      */
     private final ProcessingProcedure procedure;
 
+    private NodeCDN nodeCDN;
+
     /**
      * Constructs a new hilo instance.
      *
@@ -41,7 +54,11 @@ public class Hilo {
 
     public void start () {
 
-        if (!Main.DATABASE.fileDAO.updateStatusByStatus(FileProcessingStatus.PENDING, FileProcessingStatus.RUNNING)) {
+        if (Constants.NODECDN_USERNAME != null) {
+            this.nodeCDN = new NodeCDN(Constants.NODECDN_USERNAME, Constants.NODECDN_PASSWORD);
+        }
+
+        if (!Confluencia.FILE.updateStatusByStatus(FileProcessingStatus.PENDING, FileProcessingStatus.RUNNING)) {
 
             Main.LOGGER.error("Failed to reset status.");
         }
@@ -50,9 +67,11 @@ public class Hilo {
 
     private void poll () {
 
-        final List<ProjectFilesEntity> projectFiles = Main.DATABASE.fileDAO.getLatestFiles(this.getOpenProcessingThreads());
+        final List<ProjectFilesEntity> projectFiles = Confluencia.FILE.getLatestFiles(this.getOpenProcessingThreads());
         Main.LOGGER.info("Enqueued {} new files.", projectFiles.size());
         projectFiles.forEach(file -> this.processingExecutor.submit(new TaskProcessFile(file, this.procedure)));
+
+        updateNodeCDN();
 
         try {
 
@@ -65,6 +84,41 @@ public class Hilo {
         catch (final InterruptedException e) {
 
             // Polling failed
+        }
+    }
+
+    private void updateNodeCDN () throws RuntimeException {
+
+        if (this.nodeCDN == null) {
+            return;
+        }
+
+        NodeCDNCommitsEntity commit = Confluencia.SECURITY.findAllNodeCDNCommits();
+        if (commit != null) {
+            if (System.currentTimeMillis() - commit.getCreatedAt().getTime() < TimeUnit.MINUTES.toMillis(5)) {
+                return;
+            }
+            if (!Confluencia.SECURITY.updateNodeCDNCommits(commit.getId())) {
+                throw new RuntimeException("Internal Server Error: Failed to update commit");
+            }
+        }
+
+        String uuid = UUID.randomUUID().toString();
+        commit = new NodeCDNCommitsEntity();
+        commit.setHash(uuid);
+
+        String message = ZonedDateTime.ofInstant(Instant.now(), ZoneId.of("UTC")).toString();
+
+        RequestCommit request = new RequestCommit(message, Constants.NODECDN_WEBHOOK_URL + uuid, true, true);
+        Response<ResponseCommitsHead> response = this.nodeCDN.getNodeCDNService().postCommit(request);
+
+        if (response.isSuccess()) {
+            if (!Confluencia.SECURITY.insertNodeCDNCommits(commit)) {
+                throw new RuntimeException("Internal Server Error: Failed to update commit");
+            }
+        }
+        else {
+            throw new RuntimeException("Request Unsuccessful");
         }
     }
 

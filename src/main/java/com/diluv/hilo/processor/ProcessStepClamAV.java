@@ -3,6 +3,7 @@ package com.diluv.hilo.processor;
 import java.nio.file.Path;
 
 import com.diluv.clamchowder.ScanResult;
+import com.diluv.confluencia.Confluencia;
 import com.diluv.confluencia.database.record.ProjectFileAntivirusEntity;
 import com.diluv.confluencia.database.record.ProjectFilesEntity;
 import com.diluv.hilo.Main;
@@ -20,7 +21,7 @@ public class ProcessStepClamAV implements IProcessStep {
             ProjectFileAntivirusEntity projectFileAntivirus = new ProjectFileAntivirusEntity();
             projectFileAntivirus.setProjectFile(fileRecord);
             projectFileAntivirus.setMalware(result.getFound());
-            if (!Main.DATABASE.fileDAO.insertProjectFileAntivirus(projectFileAntivirus)) {
+            if (!Confluencia.FILE.insertProjectFileAntivirus(projectFileAntivirus)) {
                 throw new RuntimeException("Inserting project file failed");
             }
         }

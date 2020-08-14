@@ -35,6 +35,9 @@ public class Constants {
 
     public static final String PROCESSING_FOLDER = getValueOrDefault("PROCESSING_FOLDER", "processing");
     public static final String NODECDN_FOLDER = getValueOrDefault("NODECDN_FOLDER", "nodecdn");
+    public static final String NODECDN_USERNAME = getValueOrDefault("NODECDN_USERNAME", null);
+    public static final String NODECDN_PASSWORD = getValueOrDefault("NODECDN_PASSWORD", null);
+    public static final String NODECDN_WEBHOOK_URL = getValueOrDefault("NODECDN_WEBHOOK_URL", "https://api.diluv.com/v1/projects/nodecdn/");
 
     private static String getValueOrDefault (String env, String defaultValue) {
 

@@ -5,6 +5,7 @@ import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
 
+import com.diluv.confluencia.Confluencia;
 import com.diluv.confluencia.database.record.FileProcessingStatus;
 import com.diluv.confluencia.database.record.ProjectFilesEntity;
 import com.diluv.hilo.procedure.ProcessingProcedure;
@@ -49,7 +50,7 @@ public class TaskProcessFile implements Runnable {
     private void setup () throws Exception {
 
         if (!this.inputFile.toFile().exists()) {
-            if (!Main.DATABASE.fileDAO.updateStatusById(FileProcessingStatus.FAILED_INVALID_FILE, this.record.getId())) {
+            if (!Confluencia.FILE.updateStatusById(FileProcessingStatus.FAILED_INVALID_FILE, this.record.getId())) {
                 //TODO error to discord or central location
             }
             throw new IllegalStateException("The target file does not exist. Expected a file at " + this.inputFile);
@@ -67,7 +68,7 @@ public class TaskProcessFile implements Runnable {
         file.getParentFile().mkdirs();
         FileUtils.copyDirectory(this.workingDir.toFile(), file);
 
-        if (!Main.DATABASE.fileDAO.updateStatusById(FileProcessingStatus.SUCCESS, this.record.getId())) {
+        if (!Confluencia.FILE.updateStatusById(FileProcessingStatus.SUCCESS, this.record.getId())) {
             //TODO error to discord or central location
         }
     }
@@ -83,7 +84,7 @@ public class TaskProcessFile implements Runnable {
 
         if (this.attempts > 3) {
 
-            if (!Main.DATABASE.fileDAO.updateStatusById(FileProcessingStatus.FAILED_INTERNAL_SERVER_ERROR, this.record.getId())) {
+            if (!Confluencia.FILE.updateStatusById(FileProcessingStatus.FAILED_INTERNAL_SERVER_ERROR, this.record.getId())) {
                 //TODO error to discord or central location
             }
         }
