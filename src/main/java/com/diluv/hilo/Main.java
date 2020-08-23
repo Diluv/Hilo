@@ -1,12 +1,5 @@
 package com.diluv.hilo;
 
-import java.io.IOException;
-import java.security.Security;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 import com.diluv.clamchowder.ClamClient;
 import com.diluv.confluencia.Confluencia;
 import com.diluv.hilo.procedure.ProcessingProcedure;
@@ -14,6 +7,13 @@ import com.diluv.hilo.processor.ProcessStepASC;
 import com.diluv.hilo.processor.ProcessStepClamAV;
 import com.diluv.hilo.processor.ProcessStepGZip;
 import com.diluv.hilo.utils.Constants;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import java.io.IOException;
+import java.security.Security;
 
 public class Main {
 
@@ -24,20 +24,25 @@ public class Main {
 
     public static void main (String[] args) throws IOException {
 
-        Security.addProvider(new BouncyCastleProvider());
+        try {
+            Security.addProvider(new BouncyCastleProvider());
 
-        Confluencia.init(Constants.DB_HOSTNAME, Constants.DB_USERNAME, Constants.DB_PASSWORD);
+            Confluencia.init(Constants.DB_HOSTNAME, Constants.DB_USERNAME, Constants.DB_PASSWORD);
 
-        if (CLAM.ping()) {
+            if (CLAM.ping()) {
 
-            LOGGER.info("Successfully connected to ClamAV.");
+                LOGGER.info("Successfully connected to ClamAV.");
+            }
+
+            else {
+
+                LOGGER.error("Failed to connect with ClamAV.");
+            }
+
+            HILO.start();
         }
-
-        else {
-
-            LOGGER.error("Failed to connect with ClamAV.");
+        catch (Exception e) {
+            e.printStackTrace();
         }
-
-        HILO.start();
     }
 }
