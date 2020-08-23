@@ -99,16 +99,8 @@ public class Hilo {
         }
         this.lastTime = System.currentTimeMillis();
 
-        NodeCDNCommitsEntity commit = Confluencia.SECURITY.findOneNodeCDNCommits();
-        if (commit != null) {
-
-            if (!Confluencia.SECURITY.updateNodeCDNCommits(commit)) {
-                throw new RuntimeException("Internal Server Error: Failed to update commit");
-            }
-        }
-
         String uuid = UUID.randomUUID().toString();
-        commit = new NodeCDNCommitsEntity();
+        NodeCDNCommitsEntity commit = new NodeCDNCommitsEntity();
         commit.setHash(uuid);
 
         String message = ZonedDateTime.ofInstant(Instant.now(), ZoneId.of("UTC")).toString();
