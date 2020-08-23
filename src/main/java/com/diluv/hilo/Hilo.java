@@ -38,6 +38,7 @@ public class Hilo {
     private final ProcessingProcedure procedure;
 
     private NodeCDN nodeCDN;
+    private long lastTime;
 
     /**
      * Constructs a new hilo instance.
@@ -93,11 +94,14 @@ public class Hilo {
             return;
         }
 
+        if (System.currentTimeMillis() - this.lastTime < TimeUnit.MINUTES.toMillis(5)) {
+            return;
+        }
+        this.lastTime = System.currentTimeMillis();
+
         NodeCDNCommitsEntity commit = Confluencia.SECURITY.findOneNodeCDNCommits();
         if (commit != null) {
-            if (System.currentTimeMillis() - commit.getCreatedAt().getTime() < TimeUnit.MINUTES.toMillis(5)) {
-                return;
-            }
+
             if (!Confluencia.SECURITY.updateNodeCDNCommits(commit)) {
                 throw new RuntimeException("Internal Server Error: Failed to update commit");
             }
