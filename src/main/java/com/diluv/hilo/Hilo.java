@@ -85,7 +85,7 @@ public class Hilo {
         try {
 
             if (Main.RUNNING) {
-                Thread.sleep(1000 * 30L);
+                Thread.sleep(1000 * 5L);
                 this.poll();
             }
         }
