@@ -1,5 +1,6 @@
 package com.diluv.hilo;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -19,6 +20,8 @@ import com.diluv.nodecdn.NodeCDN;
 import com.diluv.nodecdn.request.RequestCommit;
 import com.diluv.nodecdn.response.Response;
 import com.diluv.nodecdn.response.commits.head.ResponseCommitsHead;
+import com.diluv.schoomp.Webhook;
+import com.diluv.schoomp.message.Message;
 
 /**
  * Instances of Hilo are responsible for polling the database for newly created files. When new
@@ -37,6 +40,7 @@ public class Hilo {
      */
     private final ProcessingProcedure procedure;
 
+    private Webhook webhook;
     private NodeCDN nodeCDN;
     private long lastTime;
 
@@ -54,6 +58,10 @@ public class Hilo {
     }
 
     public void start () {
+
+        if (Constants.WEBHOOK_URL != null) {
+            this.webhook = new Webhook(Constants.WEBHOOK_URL, "Diluv Service - Hilo");
+        }
 
         if (Constants.NODECDN_USERNAME != null) {
             this.nodeCDN = new NodeCDN(Constants.NODECDN_USERNAME, Constants.NODECDN_PASSWORD);
@@ -115,6 +123,16 @@ public class Hilo {
         }
         else {
             throw new RuntimeException("Request Unsuccessful");
+        }
+
+        try {
+            Message discordMessage = new Message();
+            discordMessage.setContent("Pushed to NodeCDN " + Instant.now().toString());
+            discordMessage.setUsername("Hilo");
+            this.webhook.sendMessage(discordMessage);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

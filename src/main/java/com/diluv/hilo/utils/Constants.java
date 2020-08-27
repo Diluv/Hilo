@@ -38,6 +38,7 @@ public class Constants {
     public static final String NODECDN_USERNAME = getValueOrDefault("NODECDN_USERNAME", null);
     public static final String NODECDN_PASSWORD = getValueOrDefault("NODECDN_PASSWORD", null);
     public static final String NODECDN_WEBHOOK_URL = getValueOrDefault("NODECDN_WEBHOOK_URL", "https://api.diluv.com/v1/projects/nodecdn/");
+    public static final String WEBHOOK_URL = getValueOrDefault("WEBHOOK_URL", null);
 
     private static String getValueOrDefault (String env, String defaultValue) {
 
