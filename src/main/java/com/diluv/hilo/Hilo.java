@@ -80,7 +80,9 @@ public class Hilo {
         Main.LOGGER.info("Enqueued {} new files.", projectFiles.size());
         projectFiles.forEach(file -> this.processingExecutor.submit(new TaskProcessFile(file, this.procedure)));
 
-        updateNodeCDN();
+        if (!projectFiles.isEmpty()) {
+            updateNodeCDN();
+        }
 
         try {
 
