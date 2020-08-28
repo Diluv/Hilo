@@ -91,16 +91,6 @@ public class TaskProcessFile implements Runnable {
 
         else {
 
-            try {
-
-                Thread.sleep(1000);
-            }
-
-            catch (final InterruptedException e) {
-
-                e.printStackTrace();
-            }
-
             this.run();
         }
     }

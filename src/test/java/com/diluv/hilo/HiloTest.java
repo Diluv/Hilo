@@ -12,8 +12,6 @@ import java.security.Security;
 import java.time.Duration;
 import java.util.List;
 
-import com.diluv.nodecdn.NodeCDN;
-
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Assertions;
@@ -98,27 +96,11 @@ public class HiloTest {
     @Test
     public void test () {
 
-        new Thread(() -> {
-            try {
-                while (Main.RUNNING) {
-                    Thread.sleep(1000);
-                    final List<ProjectFilesEntity> running = Confluencia.FILE.findAllWhereStatusAndLimit(FileProcessingStatus.RUNNING, 5);
-                    final List<ProjectFilesEntity> pending = Confluencia.FILE.findAllWhereStatusAndLimit(FileProcessingStatus.PENDING, 5);
-                    if (running.size() == 0 && pending.size() == 0) {
-                        Main.RUNNING = false;
-                    }
-                }
-            }
-            catch (InterruptedException e) {
-                Assertions.assertNull(e);
-            }
-        }).start();
-
         Main.HILO.start();
 
         this.check(FileProcessingStatus.PENDING, 0);
         this.check(FileProcessingStatus.RUNNING, 0);
-        this.check(FileProcessingStatus.SUCCESS, 14);
+        this.check(FileProcessingStatus.SUCCESS, 5);
         this.check(FileProcessingStatus.FAILED_UNSPECIFIED, 0);
         this.check(FileProcessingStatus.FAILED_INTERNAL_SERVER_ERROR, 1);
         this.check(FileProcessingStatus.FAILED_MALWARE_DETECTED, 1);

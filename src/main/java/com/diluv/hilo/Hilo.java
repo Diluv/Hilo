@@ -80,22 +80,30 @@ public class Hilo {
         Main.LOGGER.info("Enqueued {} new files.", projectFiles.size());
         projectFiles.forEach(file -> this.processingExecutor.submit(new TaskProcessFile(file, this.procedure)));
 
-        if (!projectFiles.isEmpty()) {
-            updateNodeCDN();
-        }
-
-        try {
-
-            if (Main.RUNNING) {
-                Thread.sleep(1000 * 5L);
-                this.poll();
+        if (projectFiles.isEmpty()) {
+            List<ProjectFilesEntity> pending = Confluencia.FILE.findAllWhereStatusAndLimit(FileProcessingStatus.SUCCESS, 1);
+            if (!pending.isEmpty()) {
+                this.updateNodeCDN();
             }
         }
-
-        catch (final InterruptedException e) {
-
-            // Polling failed
+        else {
+            this.updateNodeCDN();
         }
+
+        if (Constants.isDevelopment()) {
+            List<ProjectFilesEntity> pending = Confluencia.FILE.findAllWhereStatusAndLimit(FileProcessingStatus.PENDING, 1);
+            List<ProjectFilesEntity> running = Confluencia.FILE.findAllWhereStatusAndLimit(FileProcessingStatus.RUNNING, 1);
+            if (pending.isEmpty() && running.isEmpty()) {
+                return;
+            }
+        }
+        try {
+            Thread.sleep(500);
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.poll();
     }
 
     private void updateNodeCDN () throws RuntimeException {

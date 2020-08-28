@@ -39,6 +39,7 @@ public class Constants {
     public static final String NODECDN_PASSWORD = getValueOrDefault("NODECDN_PASSWORD", null);
     public static final String NODECDN_WEBHOOK_URL = getValueOrDefault("NODECDN_WEBHOOK_URL", "https://api.diluv.com/v1/projects/nodecdn/");
     public static final String WEBHOOK_URL = getValueOrDefault("WEBHOOK_URL", null);
+    public static final String ENVIRONMENT = getValueOrDefault("ENVIRONMENT", "PRODUCTION");
 
     private static String getValueOrDefault (String env, String defaultValue) {
 
@@ -112,5 +113,10 @@ public class Constants {
         }
 
         return value;
+    }
+
+    public static boolean isDevelopment () {
+
+        return "DEVELOPMENT".equalsIgnoreCase(Constants.ENVIRONMENT);
     }
 }
