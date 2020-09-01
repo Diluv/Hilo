@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'com.google.cloud.tools.jib' version '2.4.0'
+    id 'com.google.cloud.tools.jib' version '2.5.0'
 }
 
 version = "${project_version}" + (isSnapshot() ? '.' + getBuildNumber() : '')
@@ -17,12 +17,11 @@ dependencies {
 
     implementation project('Confluencia')
 
-    implementation group: 'com.diluv.schoomp', name: 'Schoomp', version: '1.0.9'
+    implementation group: 'com.diluv.schoomp', name: 'Schoomp', version: '1.1.0'
     implementation group: 'com.diluv.nodecdn', name: 'NodeCDN-Api', version: '1.0.0'
     implementation group: 'com.diluv.clamchowder', name: 'Clam-Chowder', version: '1.0.0'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.3'
     implementation group: 'commons-io', name: 'commons-io', version: '2.7'
-    implementation group: 'commons-codec', name: 'commons-codec', version: '1.14'
     implementation group: 'org.bouncycastle', name: 'bcpg-jdk15on', version: '1.66'
 
     testImplementation project(path: ':Confluencia', configuration: 'testOutput')
