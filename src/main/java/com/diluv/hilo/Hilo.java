@@ -98,7 +98,7 @@ public class Hilo {
             }
         }
         try {
-            Thread.sleep(500);
+            Thread.sleep(5000);
         }
         catch (InterruptedException e) {
             e.printStackTrace();
@@ -123,7 +123,7 @@ public class Hilo {
 
         String message = ZonedDateTime.ofInstant(Instant.now(), ZoneId.of("UTC")).toString();
 
-        RequestCommit request = new RequestCommit(message, Constants.NODECDN_WEBHOOK_URL + uuid, true, true);
+        RequestCommit request = new RequestCommit(message, Constants.getNodeCDNWebhookUrl(uuid), true, true);
         Response<ResponseCommitsHead> response = this.nodeCDN.getNodeCDNService().postCommit(request);
 
         if (response.isSuccess()) {

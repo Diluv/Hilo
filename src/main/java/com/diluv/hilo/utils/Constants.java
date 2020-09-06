@@ -37,7 +37,7 @@ public class Constants {
     public static final String NODECDN_FOLDER = getValueOrDefault("NODECDN_FOLDER", "nodecdn");
     public static final String NODECDN_USERNAME = getValueOrDefault("NODECDN_USERNAME", null);
     public static final String NODECDN_PASSWORD = getValueOrDefault("NODECDN_PASSWORD", null);
-    public static final String NODECDN_WEBHOOK_URL = getValueOrDefault("NODECDN_WEBHOOK_URL", "https://api.diluv.com/v1/projects/nodecdn/");
+    public static final String NODECDN_WEBHOOK_URL = getValueOrDefault("NODECDN_WEBHOOK_URL", "https://api.diluv.com");
     public static final String WEBHOOK_URL = getValueOrDefault("WEBHOOK_URL", null);
     public static final String ENVIRONMENT = getValueOrDefault("ENVIRONMENT", "PRODUCTION");
 
@@ -113,6 +113,10 @@ public class Constants {
         }
 
         return value;
+    }
+
+    public static String getNodeCDNWebhookUrl(String uuid){
+        return Constants.NODECDN_WEBHOOK_URL + "/v1/projects/nodecdn/" + uuid;
     }
 
     public static boolean isDevelopment () {
