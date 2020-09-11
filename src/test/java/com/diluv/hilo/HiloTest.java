@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.images.PullPolicy;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.diluv.clamchowder.ClamClient;
@@ -41,7 +40,6 @@ public class HiloTest {
         MYSQL_CONTAINER.start();
 
         CLAMAV = new GenericContainer<>("diluv/clamav")
-            .withImagePullPolicy(PullPolicy.alwaysPull())
             .withExposedPorts(3310)
             .waitingFor(Wait.forHealthcheck().withStartupTimeout(Duration.ofMinutes(5)));
         CLAMAV.start();
@@ -61,7 +59,7 @@ public class HiloTest {
 
             Confluencia.init(MYSQL_CONTAINER.getJdbcUrl(), MYSQL_CONTAINER.getUsername(), MYSQL_CONTAINER.getPassword());
 
-            File virus = new File(Constants.PROCESSING_FOLDER, "minecraft-je/forge-mods/1/15/malware.txt");
+            File virus = new File(Constants.PROCESSING_FOLDER, "minecraft-je/mods/1/15/malware.txt");
             virus.getParentFile().mkdirs();
             try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(virus), Charset.defaultCharset()))) {
                 writer.write("X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*");
