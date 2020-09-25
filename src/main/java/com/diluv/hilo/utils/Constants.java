@@ -116,7 +116,7 @@ public class Constants {
     }
 
     public static String getNodeCDNWebhookUrl(String uuid){
-        return Constants.NODECDN_WEBHOOK_URL + "/v1/projects/nodecdn/" + uuid;
+        return Constants.NODECDN_WEBHOOK_URL + "/v1/internal/nodecdn/" + uuid;
     }
 
     public static boolean isDevelopment () {
