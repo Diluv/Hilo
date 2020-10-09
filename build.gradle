@@ -65,6 +65,10 @@ jib {
     }
 }
 
+checkstyle {
+    toolVersion "8.36.2"
+}
+
 static String getBuildNumber() {
     return System.getenv("GITHUB_RUN_NUMBER") ?: "0"
 }
