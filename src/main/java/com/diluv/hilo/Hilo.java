@@ -67,36 +67,54 @@ public class Hilo {
             this.nodeCDN = new NodeCDN(Constants.NODECDN_USERNAME, Constants.NODECDN_PASSWORD);
         }
 
-        if (!Confluencia.FILE.updateStatusByStatus(FileProcessingStatus.PENDING, FileProcessingStatus.RUNNING)) {
+        Confluencia.getTransaction(session -> {
+            if (!Confluencia.FILE.updateStatusByStatus(session, FileProcessingStatus.PENDING, FileProcessingStatus.RUNNING)) {
 
-            Main.LOGGER.error("Failed to reset status.");
-        }
+                Main.LOGGER.error("Failed to reset status.");
+            }
+        });
+
         this.poll();
     }
 
     private void poll () {
 
-        final List<ProjectFilesEntity> projectFiles = Confluencia.FILE.getLatestFiles(this.getOpenProcessingThreads());
+        final List<ProjectFilesEntity> projectFiles = Confluencia.getTransaction(session -> {
+            return Confluencia.FILE.getLatestFiles(session, this.getOpenProcessingThreads());
+        });
+
         Main.LOGGER.info("Enqueued {} new files.", projectFiles.size());
         projectFiles.forEach(file -> this.processingExecutor.submit(new TaskProcessFile(file, this.procedure)));
 
         if (projectFiles.isEmpty()) {
-            List<ProjectFilesEntity> pending = Confluencia.FILE.findAllWhereStatusAndLimit(FileProcessingStatus.SUCCESS, 1);
-            if (!pending.isEmpty()) {
-                this.updateNodeCDN();
+            boolean callNodeCDN = Confluencia.getTransaction(session -> {
+                if (Confluencia.MISC.existsImagesForRelease(session)) {
+                    return true;
+                }
+                List<ProjectFilesEntity> pending = Confluencia.FILE.findAllWhereStatusAndLimit(session, FileProcessingStatus.SUCCESS, 1);
+                return !pending.isEmpty();
+            });
+
+            if (callNodeCDN) {
+                updateNodeCDN();
             }
         }
         else {
-            this.updateNodeCDN();
+            updateNodeCDN();
         }
 
         if (Constants.isDevelopment()) {
-            List<ProjectFilesEntity> pending = Confluencia.FILE.findAllWhereStatusAndLimit(FileProcessingStatus.PENDING, 1);
-            List<ProjectFilesEntity> running = Confluencia.FILE.findAllWhereStatusAndLimit(FileProcessingStatus.RUNNING, 1);
-            if (pending.isEmpty() && running.isEmpty()) {
+            boolean end = Confluencia.getTransaction(session -> {
+                List<ProjectFilesEntity> pending = Confluencia.FILE.findAllWhereStatusAndLimit(session, FileProcessingStatus.PENDING, 1);
+                List<ProjectFilesEntity> running = Confluencia.FILE.findAllWhereStatusAndLimit(session, FileProcessingStatus.RUNNING, 1);
+                return pending.isEmpty() && running.isEmpty();
+            });
+            if (end) {
                 return;
             }
         }
+
+
         try {
             Thread.sleep(5000);
         }
@@ -127,9 +145,9 @@ public class Hilo {
         Response<ResponseCommitsHead> response = this.nodeCDN.getNodeCDNService().postCommit(request);
 
         if (response.isSuccess()) {
-            if (!Confluencia.SECURITY.insertNodeCDNCommits(commit)) {
-                throw new RuntimeException("Internal Server Error: Failed to update commit");
-            }
+            Confluencia.getTransaction(session -> {
+                session.save(commit);
+            });
         }
         else {
             throw new RuntimeException("Request Unsuccessful");

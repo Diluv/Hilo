@@ -21,9 +21,10 @@ public class ProcessStepClamAV implements IProcessStep {
             ProjectFileAntivirusEntity projectFileAntivirus = new ProjectFileAntivirusEntity();
             projectFileAntivirus.setProjectFile(fileRecord);
             projectFileAntivirus.setMalware(result.getFound());
-            if (!Confluencia.FILE.insertProjectFileAntivirus(projectFileAntivirus)) {
-                throw new RuntimeException("Inserting project file failed");
-            }
+
+            Confluencia.getTransaction(session -> {
+                session.save(projectFileAntivirus);
+            });
         }
     }
 
