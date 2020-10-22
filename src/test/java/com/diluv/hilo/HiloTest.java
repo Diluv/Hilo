@@ -68,7 +68,10 @@ public class HiloTest {
                 e.printStackTrace();
             }
 
-            List<ProjectFilesEntity> files = Confluencia.FILE.findAllWhereStatusAndLimit(FileProcessingStatus.PENDING, 100);
+            List<ProjectFilesEntity> files = Confluencia.getTransaction(session -> {
+                return Confluencia.FILE.findAllWhereStatusAndLimit(session, FileProcessingStatus.PENDING, 100);
+            });
+
             for (ProjectFilesEntity record : files) {
                 InputStream io = HiloTest.class.getResourceAsStream("/testfiles/" + record.getName());
                 if (io != null) {
@@ -108,7 +111,9 @@ public class HiloTest {
 
     public void check (FileProcessingStatus status, int expected) {
 
-        final List<ProjectFilesEntity> files = Confluencia.FILE.findAllWhereStatusAndLimit(status, 100);
+        final List<ProjectFilesEntity> files = Confluencia.getTransaction(session -> {
+            return Confluencia.FILE.findAllWhereStatusAndLimit(session, status, 100);
+        });
         Assertions.assertEquals(expected, files.size());
     }
 }

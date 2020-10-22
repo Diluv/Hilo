@@ -50,9 +50,12 @@ public class TaskProcessFile implements Runnable {
     private void setup () throws Exception {
 
         if (!this.inputFile.toFile().exists()) {
-            if (!Confluencia.FILE.updateStatusById(FileProcessingStatus.FAILED_INVALID_FILE, this.record.getId())) {
-                //TODO error to discord or central location
-            }
+            Confluencia.getTransaction(session -> {
+                if (!Confluencia.FILE.updateStatusById(session, FileProcessingStatus.FAILED_INVALID_FILE, this.record.getId())) {
+                    //TODO error to discord or central location
+                }
+            });
+
             throw new IllegalStateException("The target file does not exist. Expected a file at " + this.inputFile);
         }
     }
@@ -68,9 +71,11 @@ public class TaskProcessFile implements Runnable {
         file.getParentFile().mkdirs();
         FileUtils.copyDirectory(this.workingDir.toFile(), file);
 
-        if (!Confluencia.FILE.updateStatusById(FileProcessingStatus.SUCCESS, this.record.getId())) {
-            //TODO error to discord or central location
-        }
+        Confluencia.getTransaction(session -> {
+            if (!Confluencia.FILE.updateStatusById(session, FileProcessingStatus.SUCCESS, this.record.getId())) {
+                //TODO error to discord or central location
+            }
+        });
     }
 
     private void cleanup () throws Exception {
@@ -84,9 +89,11 @@ public class TaskProcessFile implements Runnable {
 
         if (this.attempts > 3) {
 
-            if (!Confluencia.FILE.updateStatusById(FileProcessingStatus.FAILED_INTERNAL_SERVER_ERROR, this.record.getId())) {
-                //TODO error to discord or central location
-            }
+            Confluencia.getTransaction(session -> {
+                if (!Confluencia.FILE.updateStatusById(session, FileProcessingStatus.FAILED_INTERNAL_SERVER_ERROR, this.record.getId())) {
+                    //TODO error to discord or central location
+                }
+            });
         }
 
         else {
