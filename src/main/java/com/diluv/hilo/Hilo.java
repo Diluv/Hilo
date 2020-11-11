@@ -23,6 +23,8 @@ import com.diluv.nodecdn.response.commits.head.ResponseCommitsHead;
 import com.diluv.schoomp.Webhook;
 import com.diluv.schoomp.message.Message;
 
+import org.apache.commons.lang3.concurrent.TimedSemaphore;
+
 /**
  * Instances of Hilo are responsible for polling the database for newly created files. When new
  * files are found they are added to a processing pool that applies a processing procedure to
@@ -74,54 +76,53 @@ public class Hilo {
             }
         });
 
-        this.poll();
+        this.poll(new TimedSemaphore(1, TimeUnit.MINUTES, 2));
     }
 
-    private void poll () {
-
-        final List<ProjectFilesEntity> projectFiles = Confluencia.getTransaction(session -> {
-            return Confluencia.FILE.getLatestFiles(session, this.getOpenProcessingThreads());
-        });
-
-        Main.LOGGER.info("Enqueued {} new files.", projectFiles.size());
-        projectFiles.forEach(file -> this.processingExecutor.submit(new TaskProcessFile(file, this.procedure)));
-
-        if (projectFiles.isEmpty()) {
-            boolean callNodeCDN = Confluencia.getTransaction(session -> {
-                if (Confluencia.MISC.existsImagesForRelease(session)) {
-                    return true;
-                }
-                List<ProjectFilesEntity> pending = Confluencia.FILE.findAllWhereStatusAndLimit(session, FileProcessingStatus.SUCCESS, 1);
-                return !pending.isEmpty();
-            });
-
-            if (callNodeCDN) {
-                updateNodeCDN();
-            }
-        }
-        else {
-            updateNodeCDN();
-        }
-
-        if (Constants.isDevelopment()) {
-            boolean end = Confluencia.getTransaction(session -> {
-                List<ProjectFilesEntity> pending = Confluencia.FILE.findAllWhereStatusAndLimit(session, FileProcessingStatus.PENDING, 1);
-                List<ProjectFilesEntity> running = Confluencia.FILE.findAllWhereStatusAndLimit(session, FileProcessingStatus.RUNNING, 1);
-                return pending.isEmpty() && running.isEmpty();
-            });
-            if (end) {
-                return;
-            }
-        }
-
+    private void poll (TimedSemaphore semaphore) {
 
         try {
-            Thread.sleep(5000);
+            while (true) {
+                semaphore.acquire();
+                final List<ProjectFilesEntity> projectFiles = Confluencia.getTransaction(session -> {
+                    return Confluencia.FILE.getLatestFiles(session, this.getOpenProcessingThreads());
+                });
+
+                Main.LOGGER.info("Enqueued {} new files.", projectFiles.size());
+                projectFiles.forEach(file -> this.processingExecutor.submit(new TaskProcessFile(file, this.procedure)));
+
+                if (projectFiles.isEmpty()) {
+                    boolean callNodeCDN = Confluencia.getTransaction(session -> {
+                        if (Confluencia.MISC.existsImagesForRelease(session)) {
+                            return true;
+                        }
+                        List<ProjectFilesEntity> pending = Confluencia.FILE.findAllWhereStatusAndLimit(session, FileProcessingStatus.SUCCESS, 1);
+                        return !pending.isEmpty();
+                    });
+
+                    if (callNodeCDN) {
+                        updateNodeCDN();
+                    }
+                }
+                else {
+                    updateNodeCDN();
+                }
+
+                if (Constants.isDevelopment()) {
+                    boolean end = Confluencia.getTransaction(session -> {
+                        List<ProjectFilesEntity> pending = Confluencia.FILE.findAllWhereStatusAndLimit(session, FileProcessingStatus.PENDING, 1);
+                        List<ProjectFilesEntity> running = Confluencia.FILE.findAllWhereStatusAndLimit(session, FileProcessingStatus.RUNNING, 1);
+                        return pending.isEmpty() && running.isEmpty();
+                    });
+                    if (end) {
+                        break;
+                    }
+                }
+            }
         }
         catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.poll();
     }
 
     private void updateNodeCDN () throws RuntimeException {
