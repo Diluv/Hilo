@@ -10,6 +10,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.concurrent.TimedSemaphore;
+
 import com.diluv.confluencia.Confluencia;
 import com.diluv.confluencia.database.record.FileProcessingStatus;
 import com.diluv.confluencia.database.record.NodeCDNCommitsEntity;
@@ -22,8 +24,6 @@ import com.diluv.nodecdn.response.Response;
 import com.diluv.nodecdn.response.commits.head.ResponseCommitsHead;
 import com.diluv.schoomp.Webhook;
 import com.diluv.schoomp.message.Message;
-
-import org.apache.commons.lang3.concurrent.TimedSemaphore;
 
 /**
  * Instances of Hilo are responsible for polling the database for newly created files. When new
@@ -88,7 +88,9 @@ public class Hilo {
                     return Confluencia.FILE.getLatestFiles(session, this.getOpenProcessingThreads());
                 });
 
-                Main.LOGGER.info("Enqueued {} new files.", projectFiles.size());
+                if (!projectFiles.isEmpty()) {
+                    Main.LOGGER.info("Enqueued {} new files.", projectFiles.size());
+                }
                 projectFiles.forEach(file -> this.processingExecutor.submit(new TaskProcessFile(file, this.procedure)));
 
                 if (projectFiles.isEmpty()) {
