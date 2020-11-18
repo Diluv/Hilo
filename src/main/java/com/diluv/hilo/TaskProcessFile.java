@@ -65,7 +65,7 @@ public class TaskProcessFile implements Runnable {
         this.procedure.process(this.record, this.inputFile, this.workingDir);
     }
 
-    private void finish () throws Exception {
+    public void finish () throws Exception {
 
         File file = FileUtil.getNodeCDNLocation(this.record);
         file.getParentFile().mkdirs();
