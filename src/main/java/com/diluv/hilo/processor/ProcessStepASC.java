@@ -47,7 +47,7 @@ public class ProcessStepASC implements IProcessStep {
 
         try (InputStream fileIn = new BufferedInputStream(new FileInputStream(toProcess.toFile()))) {
 
-            try (FileOutputStream stream = new FileOutputStream(output.toFile()); ArmoredOutputStream armorOut = new ArmoredOutputStream(stream); BCPGOutputStream bcpgOut = new BCPGOutputStream(armorOut);) {
+            try (FileOutputStream stream = new FileOutputStream(output.toFile()); BCPGOutputStream out = new BCPGOutputStream(new ArmoredOutputStream(stream))) {
 
                 final PGPPrivateKey privateKey = this.pgpSecret.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider("BC").build(this.pass));
                 final PGPSignatureGenerator sigGenerator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(this.pgpSecret.getPublicKey().getAlgorithm(), HashAlgorithmTags.SHA512).setProvider("BC"));
@@ -61,7 +61,7 @@ public class ProcessStepASC implements IProcessStep {
                     sigGenerator.update((byte) nextByte);
                 }
 
-                sigGenerator.generate().encode(bcpgOut);
+                sigGenerator.generate().encode(out);
             }
         }
     }

@@ -107,7 +107,7 @@ public class Hilo {
                     }
                 }
 
-                if (Constants.isDevelopment()) {
+                if (Constants.isTesting()) {
                     boolean end = Confluencia.getTransaction(session -> {
                         List<ProjectFilesEntity> pending = Confluencia.FILE.findAllWhereStatusAndLimit(session, FileProcessingStatus.PENDING, 1);
                         List<ProjectFilesEntity> running = Confluencia.FILE.findAllWhereStatusAndLimit(session, FileProcessingStatus.RUNNING, 1);

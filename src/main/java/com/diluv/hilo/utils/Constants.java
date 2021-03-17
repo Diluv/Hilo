@@ -120,8 +120,8 @@ public class Constants {
         return Constants.NODECDN_WEBHOOK_URL + "/v1/internal/nodecdn/" + uuid;
     }
 
-    public static boolean isDevelopment () {
+    public static boolean isTesting () {
 
-        return "DEVELOPMENT".equalsIgnoreCase(Constants.ENVIRONMENT);
+        return "TESTING".equalsIgnoreCase(Constants.ENVIRONMENT);
     }
 }
